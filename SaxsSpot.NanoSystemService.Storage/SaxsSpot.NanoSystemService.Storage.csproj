@@ -8,7 +8,7 @@
     <Version>1.0.4+$(BuildDate)$(BuildTime)</Version>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SaxsSpot.NanoSystemService.Entities\SaxsSpot.NanoSystemService.Entities.csproj" />
+    <ProjectReference Include="..\SaxsSpot.NanoSystemService.Domain\SaxsSpot.NanoSystemService.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />

@@ -1,5 +1,5 @@
 using SaxsSpot.Core.GenericStorage.Engine;
-using SaxsSpot.NanoSystemService.Entities;
+using SaxsSpot.NanoSystemService.Domain;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
 

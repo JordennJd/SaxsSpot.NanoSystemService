@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj" />
-      <ProjectReference Include="..\SaxsSpot.NanoSystemService.Engine\SaxsSpot.NanoSystemService.Engine.csproj" />
+      <ProjectReference Include="..\SaxsSpot.NanoSystemService.Application\SaxsSpot.NanoSystemService.Application.csproj" />
       <ProjectReference Include="..\SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj" />
     </ItemGroup>
 

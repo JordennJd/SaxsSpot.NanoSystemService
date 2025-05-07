@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemService.Contracts.Services;
-using SaxsSpot.NanoSystemService.Engine.Services;
+using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Storage;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
@@ -19,7 +19,7 @@ public class Program
 
         var serviceProvider = new ServiceCollection()
             .AddDbContext<NanoSystemDbContext>()
-            .AddScoped<INanoSystemGenerationManager, NanoSystemGenerationManager>()
+            .AddScoped<INanoSystemService, NanoSystemService>()
             .AddScoped<INanoSystemStorage, NanoSystemStorage>()
             .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
             .AddScoped<IConfiguration>(_ => configuration)
@@ -27,7 +27,7 @@ public class Program
 
 
         using var scope = serviceProvider.CreateScope();
-        var service = scope.ServiceProvider.GetService<INanoSystemGenerationManager>();
+        var service = scope.ServiceProvider.GetService<INanoSystemService>();
 
         await service.RunGeneration(new ParallelepipedGenerationParameters(1, 10000, 0.3f, null, 1f * (1 / (MathF.PI / 6f)), 3f * (1 / (MathF.PI / 6f)), 1f, 3, 1.1f));
         await service.RunGeneration(new SphereGenerationParameters(10000, 0.3f, null, 1, 3, 1f, 3, 1.1f));

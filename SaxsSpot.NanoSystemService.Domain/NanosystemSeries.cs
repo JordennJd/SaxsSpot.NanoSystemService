@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 
-namespace SaxsSpot.NanoSystemService.Entities;
+namespace SaxsSpot.NanoSystemService.Domain;
 
 [Table("nanosystem_series")]
 public class NanosystemSeries

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SaxsSpot.Core.GenericStorage.Engine;
-using SaxsSpot.NanoSystemService.Entities;
+using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Storage.DbContexts;
 

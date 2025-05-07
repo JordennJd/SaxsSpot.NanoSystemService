@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationZones.Enums;
 
-namespace SaxsSpot.NanoSystemService.Entities;
+namespace SaxsSpot.NanoSystemService.Domain;
 
 [Table("nanosystem")]
 public class Nanosystem

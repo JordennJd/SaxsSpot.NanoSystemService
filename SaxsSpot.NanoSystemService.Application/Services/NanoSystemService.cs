@@ -1,17 +1,17 @@
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
 using SaxsSpot.NanoSystemService.Contracts.Services;
-using SaxsSpot.NanoSystemService.Entities;
+using SaxsSpot.NanoSystemService.Domain;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 
-namespace SaxsSpot.NanoSystemService.Engine.Services;
+namespace SaxsSpot.NanoSystemService.Application.Services;
 
-public class NanoSystemGenerationManager : INanoSystemGenerationManager
+public class NanoSystemService : INanoSystemService
 {
     private readonly INanoSystemStorage _storage;
     private readonly INanoSystemObjectStorage _objectStorage;
 
-    public NanoSystemGenerationManager(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage)
+    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage)
     {
         _objectStorage = objectStorage;
         _storage = storage;

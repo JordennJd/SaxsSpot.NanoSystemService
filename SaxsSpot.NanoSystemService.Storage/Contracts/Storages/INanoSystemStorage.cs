@@ -1,5 +1,5 @@
 using SaxsSpot.Core.Contracts.Services;
-using SaxsSpot.NanoSystemService.Entities;
+using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Storage.Contracts;
 

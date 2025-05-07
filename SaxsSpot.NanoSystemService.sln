@@ -2,9 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Contracts", "SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj", "{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Engine", "SaxsSpot.NanoSystemService.Engine\SaxsSpot.NanoSystemService.Engine.csproj", "{E245171F-BF55-4F97-AE07-51C97C893E94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Application", "SaxsSpot.NanoSystemService.Application\SaxsSpot.NanoSystemService.Application.csproj", "{E245171F-BF55-4F97-AE07-51C97C893E94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Entities", "SaxsSpot.NanoSystemService.Entities\SaxsSpot.NanoSystemService.Entities.csproj", "{3A30FA89-B6C1-42F0-AFD0-FB4217808318}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Domain", "SaxsSpot.NanoSystemService.Domain\SaxsSpot.NanoSystemService.Domain.csproj", "{3A30FA89-B6C1-42F0-AFD0-FB4217808318}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Storage", "SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj", "{3E8730FB-4B48-4741-BA29-69A88E108BC4}"
 EndProject
