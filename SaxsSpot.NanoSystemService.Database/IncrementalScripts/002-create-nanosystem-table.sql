@@ -1,0 +1,23 @@
+--liquibase formatted sql
+
+--changeset Jordenn:create-schema-saxs_spot
+CREATE TABLE IF NOT EXISTS nanosystem (
+    id serial  PRIMARY key,
+    particle_kind INTEGER NOT NULL,
+    series_id BIGINT NOT NULL,
+    object_id UUID NOT NULL,
+    user_id BIGINT NOT NULL,
+    particle_count INTEGER NOT NULL,
+    global_size REAL NOT NULL,
+    generation_zone_form INTEGER NOT NULL,
+    generation_zone_volume REAL NOT NULL,
+    numerical_concentration REAL NOT NULL,
+    max_particle_size REAL NOT NULL,
+    min_particle_size REAL NOT NULL,
+    excess REAL NOT NULL,
+    k REAL NOT NULL,
+    theta REAL NOT NULL,
+    generation_start timestamp NOT NULL,
+    generation_end timestamp NOT NULL,
+    input_date timestamp NOT NULL
+);

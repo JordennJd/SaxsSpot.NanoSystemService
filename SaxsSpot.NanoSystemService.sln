@@ -10,6 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.ConsoleApp", "SaxsSpot.NanoSystemService.ConsoleApp\SaxsSpot.NanoSystemService.ConsoleApp.csproj", "{2595B18C-0FE7-459C-BD29-6ACB901EABDF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SaxsSpot.NanoSystemService.Database", "SaxsSpot.NanoSystemService.Database", "{99DDC894-35A6-44DA-B045-FA76AA909676}"
+	ProjectSection(SolutionItems) = preProject
+		SaxsSpot.NanoSystemService.Database\config.xml = SaxsSpot.NanoSystemService.Database\config.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

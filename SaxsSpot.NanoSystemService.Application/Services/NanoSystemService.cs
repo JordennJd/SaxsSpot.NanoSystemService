@@ -1,10 +1,11 @@
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
-using SaxsSpot.NanoSystemService.Contracts.Services;
-using SaxsSpot.NanoSystemService.Domain;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
 
 namespace SaxsSpot.NanoSystemService.Application.Services;
+
+using Contracts.Services;
+using Domain;
+using Storage.Contracts;
 
 public class NanoSystemService : INanoSystemService
 {
