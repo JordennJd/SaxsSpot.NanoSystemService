@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Contracts", "SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj", "{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Engine", "SaxsSpot.NanoSystemService.Engine\SaxsSpot.NanoSystemService.Engine.csproj", "{E245171F-BF55-4F97-AE07-51C97C893E94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Entities", "SaxsSpot.NanoSystemService.Entities\SaxsSpot.NanoSystemService.Entities.csproj", "{3A30FA89-B6C1-42F0-AFD0-FB4217808318}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Storage", "SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj", "{3E8730FB-4B48-4741-BA29-69A88E108BC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.ConsoleApp", "SaxsSpot.NanoSystemService.ConsoleApp\SaxsSpot.NanoSystemService.ConsoleApp.csproj", "{2595B18C-0FE7-459C-BD29-6ACB901EABDF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C50A7D3-8600-4B72-9AB8-85933A01A2D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E245171F-BF55-4F97-AE07-51C97C893E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E245171F-BF55-4F97-AE07-51C97C893E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E245171F-BF55-4F97-AE07-51C97C893E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E245171F-BF55-4F97-AE07-51C97C893E94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A30FA89-B6C1-42F0-AFD0-FB4217808318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A30FA89-B6C1-42F0-AFD0-FB4217808318}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A30FA89-B6C1-42F0-AFD0-FB4217808318}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A30FA89-B6C1-42F0-AFD0-FB4217808318}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

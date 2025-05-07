@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="SaxsSpot.Core.Contracts">
+        <HintPath>..\..\SaxsSpot.NanoSystemGenerationService\SaxsSpot.NanoSystemGenerationService.Contracts\bin\Debug\net9.0\SaxsSpot.NanoSystemGenerationService.Contracts.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.3.6" />
+    </ItemGroup>
+</Project>

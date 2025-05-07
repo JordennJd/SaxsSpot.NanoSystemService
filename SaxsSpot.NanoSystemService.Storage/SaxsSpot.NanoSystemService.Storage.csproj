@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BuildDate>$([System.DateTime]::Now.ToString('yyyyMMdd'))</BuildDate>
+    <BuildTime>$([System.DateTime]::Now.ToString('HHmmss'))</BuildTime>
+    <Version>1.0.4+$(BuildDate)$(BuildTime)</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SaxsSpot.NanoSystemService.Entities\SaxsSpot.NanoSystemService.Entities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="SaxsSpot.Core.CommonObjectStorage" Version="1.0.17" />
+    <PackageReference Include="SaxsSpot.Core.Contracts" Version="1.0.17" />
+    <PackageReference Include="SaxsSpot.Core.GenericStorage" Version="1.0.17" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+</Project>
