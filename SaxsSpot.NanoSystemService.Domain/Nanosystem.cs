@@ -9,7 +9,7 @@ namespace SaxsSpot.NanoSystemService.Domain;
 public class Nanosystem
 {
     [Column("id")] [Key]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
     
     [Column("particle_kind")]
     public ParticleKind ParticleKind { get; set; }

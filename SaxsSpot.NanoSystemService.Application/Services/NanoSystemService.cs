@@ -33,7 +33,6 @@ public class NanoSystemService : INanoSystemService
         var generationZone = await generator.GetGenerationZone();
         var entity = new Nanosystem()
         {
-            Id = 0,
             ParticleKind = options.GetParticleKind(),
             ParticleCount = distributeParticles.Count,
             NumericalConcentration = distributeParticles.Sum(x => x.GetVolume()) / generationZone.GetVolume(),
