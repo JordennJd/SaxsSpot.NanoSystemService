@@ -13,4 +13,4 @@ RUN chmod +x /liquibase/entrypoint.sh
 # Устанавливаем PostgreSQL JDBC-драйвер, если нужно
 ADD https://jdbc.postgresql.org/download/postgresql-42.2.20.jar /liquibase/lib/postgresql-42.2.20.jar
 
-ENTRYPOINT ["/liquibase/entrypoint.sh"]
+ENTRYPOINT ["liquibase", "update"]

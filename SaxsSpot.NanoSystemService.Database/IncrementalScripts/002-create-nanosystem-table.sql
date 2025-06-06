@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset Jordenn:create-schema-saxs_spot
+--changeset Jordenn:create-table-nanosystem
 CREATE TABLE IF NOT EXISTS nanosystem (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     particle_kind INTEGER NOT NULL,

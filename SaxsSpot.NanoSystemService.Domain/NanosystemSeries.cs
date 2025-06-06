@@ -9,7 +9,7 @@ public class NanosystemSeries
 {
     [Key]
     [Column("id")]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     [Column("particle_kind")]
     public ParticleKind ParticleKind { get; set; }

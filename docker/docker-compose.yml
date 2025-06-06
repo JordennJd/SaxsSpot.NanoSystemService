@@ -14,6 +14,17 @@ services:
     ports:
       - "5432:5432"
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"    # S3 API
+      - "9001:9001"    # Web UI
+    environment:
+      MINIO_ROOT_USER: s3user
+      MINIO_ROOT_PASSWORD: s3secretkey
+    command: server /data --console-address ":9001"
+    
   db-init:
     image: postgres:latest
     container_name: db_initializer

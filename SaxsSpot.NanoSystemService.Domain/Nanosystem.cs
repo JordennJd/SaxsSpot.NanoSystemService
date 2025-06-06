@@ -15,7 +15,7 @@ public class Nanosystem
     public ParticleKind ParticleKind { get; set; }
     
     [Column("series_id")]
-    public long SeriesId { get; set; }
+    public Guid SeriesId { get; set; }
     
     [Column("object_id")]
     public Guid ObjectId { get; set; }
