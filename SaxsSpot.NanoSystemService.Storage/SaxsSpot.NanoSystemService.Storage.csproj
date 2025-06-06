@@ -14,9 +14,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="SaxsSpot.Core.CommonObjectStorage" Version="1.0.17" />
-    <PackageReference Include="SaxsSpot.Core.Contracts" Version="1.0.17" />
-    <PackageReference Include="SaxsSpot.Core.GenericStorage" Version="1.0.17" />
+    <PackageReference Include="SaxsSpot.Core.CommonObjectStorage" Version="1.0.19" />
+    <PackageReference Include="SaxsSpot.Core.Contracts" Version="1.0.19" />
+    <PackageReference Include="SaxsSpot.Core.GenericStorage" Version="1.0.19" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

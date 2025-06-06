@@ -1,0 +1,9 @@
+using SaxsSpot.Core.GenericStorage.Engine;
+using SaxsSpot.NanoSystemService.Domain;
+using SaxsSpot.NanoSystemService.Storage.Contracts;
+using SaxsSpot.NanoSystemService.Storage.DbContexts;
+
+namespace SaxsSpot.NanoSystemService.Storage;
+
+public class NanoSystemSeriesStorage(NanoSystemSeriesDbContext dbContext)
+    : GenericStorage<NanosystemSeries>(dbContext), INanoSystemSeriesStorage;

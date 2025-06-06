@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS nanosystem (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     particle_kind INTEGER NOT NULL,
-    series_id BIGINT NOT NULL,
+    series_id UUID NOT NULL,
     object_id UUID NOT NULL,
     user_id BIGINT NOT NULL,
     particle_count INTEGER NOT NULL,

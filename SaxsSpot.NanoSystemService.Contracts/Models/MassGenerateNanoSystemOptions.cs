@@ -5,5 +5,4 @@ namespace SaxsSpot.NanoSystemService.Contracts.Models;
 
 public record MassGenerateNanoSystemOptions(
     IList<ParticleGenerationParameters> Options,
-    int NanoSystemsCount,
     ParticleKind NanoSystemsKind);

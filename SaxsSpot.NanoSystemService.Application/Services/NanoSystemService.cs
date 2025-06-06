@@ -11,12 +11,14 @@ using Storage.Contracts;
 public class NanoSystemService : INanoSystemService
 {
     private readonly INanoSystemStorage _storage;
+    private readonly INanoSystemSeriesStorage _seriesStorage;
     private readonly INanoSystemObjectStorage _objectStorage;
 
-    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage)
+    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage, INanoSystemSeriesStorage seriesStorage)
     {
         _objectStorage = objectStorage;
         _storage = storage;
+        _seriesStorage = seriesStorage;
     }
 
     public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options)
@@ -46,6 +48,8 @@ public class NanoSystemService : INanoSystemService
         {
             series.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
             series.MinParticleSizeTo = generatedSystems.Max(x => x.MinParticleSize);
+            series.MaxParticleSizeFrom = generatedSystems.Min(x => x.MaxParticleSize);
+            series.MaxParticleSizeTo = generatedSystems.Max(x => x.MaxParticleSize);
             series.GlobalSizeFrom = generatedSystems.Min(x => x.GlobalSize);
             series.GlobalSizeTo = generatedSystems.Max(x => x.GlobalSize);
             series.ParticleCountFrom = generatedSystems.Min(x => x.ParticleCount);
@@ -53,6 +57,8 @@ public class NanoSystemService : INanoSystemService
             series.NumericalConcentrationFrom = generatedSystems.Min(x => x.NumericalConcentration);
             series.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
         }
+
+        await _seriesStorage.UpdateOrInsertAsync(series);
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, Guid seriesId = default)
