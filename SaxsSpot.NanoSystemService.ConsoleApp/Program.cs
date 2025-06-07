@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Get;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.GetNanosystemGenerationOptions;
 using SaxsSpot.NanoSystemService.Contracts.Services;
 using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Contracts.Models;
@@ -27,21 +30,40 @@ public class Program
             .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
             .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
             .AddScoped<IConfiguration>(_ => configuration)
+            .AddMediatR(cfg => 
+                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
+            .AddAutoMapper(cfg => cfg.AddProfiles([new NanosystemProfile()]))
             .BuildServiceProvider();
-
 
         using var scope = serviceProvider.CreateScope();
         var service = scope.ServiceProvider.GetService<INanoSystemService>();
-
-        var options = new MassGenerateNanoSystemOptions([
-            new ParallelepipedGenerationParameters(
-                1, 10000, 0.2f, null, 1f * (1 / (MathF.PI / 6f)),
-                3f * (1 / (MathF.PI / 6f)), 1f, 3, 0),
-            new ParallelepipedGenerationParameters(
-                1, 10000, 0.2f, null, 1f * (1 / (MathF.PI / 6f)),
-                3f * (1 / (MathF.PI / 6f)), 1f, 3, 1.1f)
-        ], NanoSystemsKind: ParticleKind.Parallelepiped);
         
-        await service.RunSeriesGeneration(options);
+        var mediator = scope.ServiceProvider.GetService<IMediator>();
+        // var result = mediator.Send(new GetNanosystemQuery(Guid.Parse("01974708-3f83-731d-883c-c0b5377542af")));
+        var result = await mediator.Send(new GetNanosystemGenerationOptionsQuery
+        {
+            Count = 10,
+            ParticleKind = ParticleKind.Parallelepiped,
+            GlobalSizeFrom = null,
+            GlobalSizeTo = null,
+            NumericalConcentrationFrom = 0.2f,
+            NumericalConcentrationTo = 0.2f,
+            EpsilonFrom = 1,
+            EpsilonTo = 1,
+            ParticleCountFrom = 10000,
+            ParticleCountTo = 10000,
+            ExcessFrom = 1,
+            ExcessTo = 1.2f,
+            KFrom = 3,
+            KTo = 3,
+            ThetaFrom = 1,
+            ThetaTo = 1,
+            MinParticleSizeFrom = 1,
+            MinParticleSizeTo = 1,
+            MaxParticleSizeFrom = 3,
+            MaxParticleSizeTo = 3,
+        });
+        
+        await service.RunSeriesGeneration(result.Value);
     }
 }   

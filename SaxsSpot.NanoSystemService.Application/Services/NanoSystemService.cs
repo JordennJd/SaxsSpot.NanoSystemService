@@ -27,6 +27,7 @@ public class NanoSystemService : INanoSystemService
 
         var series = new NanosystemSeries
         {
+            Id = Guid.NewGuid(),
             ParticleKind = options.NanoSystemsKind,
             ExcessFrom = generationParams.Min(x => x.Excess),
             ExcessTo = generationParams.Max(x => x.Excess),
