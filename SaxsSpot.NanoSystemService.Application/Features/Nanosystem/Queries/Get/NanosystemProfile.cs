@@ -1,7 +1,7 @@
 using AutoMapper;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Get;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 
 public class NanosystemProfile : Profile
 {

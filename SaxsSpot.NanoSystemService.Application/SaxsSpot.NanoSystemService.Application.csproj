@@ -22,4 +22,8 @@
         <PackageReference Include="SaxsSpot.Transport.MessageChannel.Contracts" Version="1.0.33" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\Nanosystem\Queries\" />
+    </ItemGroup>
+
 </Project>

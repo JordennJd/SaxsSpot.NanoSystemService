@@ -2,6 +2,6 @@ using FluentResults;
 using MediatR;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Get;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 
 public record GetNanosystemQuery(Guid Id) : IRequest<Result<NanosystemDto>>;

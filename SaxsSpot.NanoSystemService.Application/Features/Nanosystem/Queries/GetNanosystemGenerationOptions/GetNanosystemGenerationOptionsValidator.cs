@@ -1,7 +1,7 @@
 using FluentValidation;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.GetNanosystemGenerationOptions;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 
 public class GetNanosystemGenerationOptionsValidator : AbstractValidator<GetNanosystemGenerationOptionsQuery>
 {

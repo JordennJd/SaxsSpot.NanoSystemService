@@ -1,14 +1,12 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
-using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
-using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Get;
-using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.GetNanosystemGenerationOptions;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 using SaxsSpot.NanoSystemService.Contracts.Services;
 using SaxsSpot.NanoSystemService.Application.Services;
-using SaxsSpot.NanoSystemService.Contracts.Models;
 using SaxsSpot.NanoSystemService.Storage;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
@@ -30,6 +28,7 @@ public class Program
             .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
             .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
             .AddScoped<IConfiguration>(_ => configuration)
+            .AddLogging()
             .AddMediatR(cfg => 
                 cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
             .AddAutoMapper(cfg => cfg.AddProfiles([new NanosystemProfile()]))
@@ -64,6 +63,6 @@ public class Program
             MaxParticleSizeTo = 3,
         });
         
-        await service.RunSeriesGeneration(result.Value);
+        await mediator.Send(new RunGenerationCommand(result.Value.Options[0]));
     }
 }   

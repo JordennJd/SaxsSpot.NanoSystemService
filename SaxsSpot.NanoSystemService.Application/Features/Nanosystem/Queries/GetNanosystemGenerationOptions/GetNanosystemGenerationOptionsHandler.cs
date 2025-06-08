@@ -5,8 +5,11 @@ using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.GetNanosystemGenerationOptions;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 
+/// <summary>
+/// Get nanosystem mass generation options
+/// </summary>
 public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosystemGenerationOptionsQuery, Result<MassGenerateNanoSystemOptions>>
 {
     public Task<Result<MassGenerateNanoSystemOptions>> Handle(GetNanosystemGenerationOptionsQuery request,

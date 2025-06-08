@@ -21,7 +21,7 @@ public class NanoSystemService : INanoSystemService
         _seriesStorage = seriesStorage;
     }
 
-    public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options)
+    public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options, CancellationToken cancellationToken = default)
     {
         var generationParams = options.Options;
 
@@ -39,7 +39,7 @@ public class NanoSystemService : INanoSystemService
 
         foreach (var option in generationParams)
         {
-            await RunGeneration(option, series.Id);
+            await RunGeneration(option, seriesId: series.Id, cancellationToken: cancellationToken);
         }
 
         var generatedSystems = (await _storage.WhereAsync(x => x.SeriesId == series.Id))
@@ -62,7 +62,8 @@ public class NanoSystemService : INanoSystemService
         await _seriesStorage.UpdateOrInsertAsync(series);
     }
     
-    public async Task RunGeneration(ParticleGenerationParameters options, Guid seriesId = default)
+    public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
+        CancellationToken cancellationToken = default, Guid seriesId = default)
     {
         var generationStartDate = DateTime.Now.ToUniversalTime();
         var systemObjectGuid = Guid.NewGuid();
@@ -71,8 +72,13 @@ public class NanoSystemService : INanoSystemService
         var system = await generator.GenerateSystem();
         var sumOfVolumes = system.Sum(x => x.GetVolume());
         var progress = new Progress<float>();
-        progress.ProgressChanged += ProgressHandler;
-        var distributeParticles = await generator?.DistributeParticles(progress, CancellationToken.None);
+
+        if (progressHandler is not null)
+        {
+            progress.ProgressChanged += progressHandler;
+        }
+        
+        var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
         
         var generationZone = await generator.GetGenerationZone();
         var entity = new Nanosystem()
@@ -97,13 +103,5 @@ public class NanoSystemService : INanoSystemService
         
         await _storage.UpdateOrInsertAsync(entity);
         await _objectStorage.Save(distributeParticles, systemObjectGuid);
-    }
-
-    private static void ProgressHandler<TEventArgs>(object? sender, TEventArgs e)
-    {
-        if (e is float progress)
-        {
-            Console.WriteLine($"Progress: {progress}");
-        }
     }
 }

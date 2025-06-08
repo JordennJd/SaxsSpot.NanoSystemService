@@ -3,7 +3,7 @@ using MediatR;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.GetNanosystemGenerationOptions;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 
 public class GetNanosystemGenerationOptionsQuery : IRequest<Result<MassGenerateNanoSystemOptions>>
 {

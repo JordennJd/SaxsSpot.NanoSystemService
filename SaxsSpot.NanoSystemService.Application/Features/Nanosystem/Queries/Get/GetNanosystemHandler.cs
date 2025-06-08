@@ -4,8 +4,13 @@ using MediatR;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 
-namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Get;
+namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 
+/// <summary>
+/// Get nanosystem parameters by id
+/// </summary>
+/// <param name="nanoSystemStorage"></param>
+/// <param name="mapper"></param>
 public class GetNanosystemHandler(INanoSystemStorage nanoSystemStorage, IMapper mapper)
     : IRequestHandler<GetNanosystemQuery, Result<NanosystemDto>>
 {
