@@ -1,4 +1,5 @@
 using SaxsSpot.NanoSystemService.Application.Extensions;
+using SaxsSpot.NanoSystemService.Host.Middlewares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.MapControllers();
 

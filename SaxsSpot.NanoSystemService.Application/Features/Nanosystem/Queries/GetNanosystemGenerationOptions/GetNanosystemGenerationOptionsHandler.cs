@@ -18,7 +18,7 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
         var r = request;
         var count = request.Count;
 
-        var parametersList = new List<ParticleGenerationParameters>();
+        var parametersList = new List<CommonParticleGenerationParameters>();
 
         // Генерация интерполированных значений с помощью MathNet
         var particleCounts = Generate.LinearSpaced(count, r.ParticleCountFrom, r.ParticleCountTo).Select(v => (int)v)
@@ -60,21 +60,10 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
 
         for (int i = 0; i < count; i++)
         {
-            switch (request.ParticleKind)
-            {
-                case (ParticleKind.Parallelepiped):
-                    parametersList.Add(new ParallelepipedGenerationParameters((float)epsilons[i], particleCounts[i],
-                        (float?)numericalConcentrations[i], (float?)globalSizes[i],
-                        (float)minSizes[i], (float)maxSizes[i], (float)thetas[i], (float)ks[i], (float)excesses[i]));
-                    break;
-                case (ParticleKind.Sphere):
-                    parametersList.Add(new SphereGenerationParameters(particleCounts[i],
-                        (float?)numericalConcentrations[i], (float?)globalSizes[i],
-                        (float)minSizes[i], (float)maxSizes[i], (float)thetas[i], (float)ks[i], (float)excesses[i]));
-                    break;
-                default:
-                    throw new ArgumentException("not supported particle kind");
-            }
+            parametersList.Add(new CommonParticleGenerationParameters( particleCounts[i],
+                (float?)numericalConcentrations[i], (float?)globalSizes[i],
+                (float)minSizes[i], (float)maxSizes[i], (float)thetas[i], (float)ks[i], (float)excesses[i], (float?)epsilons[i]));
+
         }
 
         return Task.FromResult(Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind)));

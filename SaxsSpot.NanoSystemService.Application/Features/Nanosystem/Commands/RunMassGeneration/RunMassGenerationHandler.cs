@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,9 +10,9 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.Ru
 /// Run single nanosystem generation
 /// </summary>
 /// <param name="nanoSystemService"></param>
-public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunGenerationHandler> logger) : IRequestHandler<RunGenerationCommand, Guid>
+public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunMassGenerationHandler> logger) : IRequestHandler<RunMassGenerationCommand, Guid>
 {
-    public async Task<Guid> Handle(RunGenerationCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(RunMassGenerationCommand request, CancellationToken cancellationToken)
     {
         var operationGuid = Guid.NewGuid();
         
@@ -25,8 +26,8 @@ public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<Run
             {
                 var scope = scopeFactory.CreateScope();
                 var nanoSystemService = scope.ServiceProvider.GetService<INanoSystemService>();
-                
-                return nanoSystemService.RunGeneration(request.Parameters,
+
+                return nanoSystemService.RunSeriesGeneration(request.Parameters,
                     cancellationToken: cancellationTokenSource.Token);
             }, cancellationTokenSource.Token);
             

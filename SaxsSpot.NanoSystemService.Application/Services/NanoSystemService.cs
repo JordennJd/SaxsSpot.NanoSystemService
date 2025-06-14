@@ -1,3 +1,5 @@
+using AutoMapper;
+using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
 using SaxsSpot.NanoSystemService.Contracts.Models;
@@ -13,12 +15,13 @@ public class NanoSystemService : INanoSystemService
     private readonly INanoSystemStorage _storage;
     private readonly INanoSystemSeriesStorage _seriesStorage;
     private readonly INanoSystemObjectStorage _objectStorage;
-
-    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage, INanoSystemSeriesStorage seriesStorage)
+    private readonly IMapper _mapper;
+    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage, INanoSystemSeriesStorage seriesStorage, IMapper mapper)
     {
         _objectStorage = objectStorage;
         _storage = storage;
         _seriesStorage = seriesStorage;
+        _mapper = mapper;
     }
 
     public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options, CancellationToken cancellationToken = default)
@@ -39,7 +42,15 @@ public class NanoSystemService : INanoSystemService
 
         foreach (var option in generationParams)
         {
-            await RunGeneration(option, seriesId: series.Id, cancellationToken: cancellationToken);
+            switch (option.GetParticleKind())
+            {
+                case ParticleKind.Parallelepiped:
+                    await RunGeneration(_mapper.Map<ParallelepipedGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
+                    break;
+                case ParticleKind.Sphere:
+                    await RunGeneration(_mapper.Map<SphereGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
+                    break;
+            }
         }
 
         var generatedSystems = (await _storage.WhereAsync(x => x.SeriesId == series.Id))
