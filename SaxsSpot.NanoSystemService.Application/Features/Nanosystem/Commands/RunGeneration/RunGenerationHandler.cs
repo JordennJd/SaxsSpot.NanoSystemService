@@ -20,12 +20,7 @@ public class RunGenerationHandler(INanoSystemService nanoSystemService, ILogger<
             
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             
-            await nanoSystemService.RunGeneration(request.Parameters, cancellationToken: cancellationTokenSource.Token);
-
-            if (cancellationTokenSource.IsCancellationRequested)
-            {
-                throw new OperationCanceledException();
-            }
+            _ = Task.Run(() => nanoSystemService.RunGeneration(request.Parameters, cancellationToken: cancellationTokenSource.Token), cancellationTokenSource.Token);
             
             return operationGuid;
         }

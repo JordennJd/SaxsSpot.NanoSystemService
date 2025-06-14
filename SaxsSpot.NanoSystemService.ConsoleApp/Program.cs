@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
+using SaxsSpot.NanoSystemService.Application.Extensions;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
@@ -10,6 +12,7 @@ using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Storage;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
+using Timer = System.Timers.Timer;
 
 public class Program
 {
@@ -21,19 +24,10 @@ public class Program
         IConfiguration configuration = builder.Build();
 
         var serviceProvider = new ServiceCollection()
-            .AddDbContext<NanoSystemDbContext>()
-            .AddDbContext<NanoSystemSeriesDbContext>()
-            .AddScoped<INanoSystemService, NanoSystemService>()
-            .AddScoped<INanoSystemStorage, NanoSystemStorage>()
-            .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
-            .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
-            .AddScoped<IConfiguration>(_ => configuration)
-            .AddLogging()
-            .AddMediatR(cfg => 
-                cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
-            .AddAutoMapper(cfg => cfg.AddProfiles([new NanosystemProfile()]))
+            .AddScoped((_) => configuration)
+            .AddApplication(configuration)
             .BuildServiceProvider();
-
+        
         using var scope = serviceProvider.CreateScope();
         var service = scope.ServiceProvider.GetService<INanoSystemService>();
         
@@ -62,7 +56,9 @@ public class Program
             MaxParticleSizeFrom = 3,
             MaxParticleSizeTo = 3,
         });
+
+        var cts = new CancellationTokenSource();
         
-        await mediator.Send(new RunGenerationCommand(result.Value.Options[0]));
+        await mediator.Send(new RunGenerationCommand(result.Value.Options[0]), cts.Token);
     }
 }   
