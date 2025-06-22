@@ -3,7 +3,7 @@ using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationZones.Enums;
 
 namespace SaxsSpot.NanoSystemService.Contracts.Models;
 
-public class NanosystemDto
+public record NanosystemDto
 {
     public Guid Id { get; set; }
     

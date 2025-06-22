@@ -1,3 +1,5 @@
+using Gridify;
+using Gridify.EntityFramework;
 using SaxsSpot.Core.GenericStorage.Engine;
 using SaxsSpot.NanoSystemService.Domain;
 using SaxsSpot.NanoSystemService.Storage.Contracts;
@@ -6,4 +8,10 @@ using SaxsSpot.NanoSystemService.Storage.DbContexts;
 namespace SaxsSpot.NanoSystemService.Storage;
 
 public class NanoSystemSeriesStorage(NanoSystemSeriesDbContext dbContext)
-    : GenericStorage<NanosystemSeries>(dbContext), INanoSystemSeriesStorage;
+    : GenericStorage<NanosystemSeries>(dbContext), INanoSystemSeriesStorage
+{
+    public Task<Paging<NanosystemSeries>> Gridify(GridifyQuery query)
+    {
+        return dbContext.Entities.GridifyAsync(query);
+    }
+}

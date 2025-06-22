@@ -11,6 +11,7 @@
     <ProjectReference Include="..\SaxsSpot.NanoSystemService.Domain\SaxsSpot.NanoSystemService.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Gridify.EntityFramework" Version="2.16.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
