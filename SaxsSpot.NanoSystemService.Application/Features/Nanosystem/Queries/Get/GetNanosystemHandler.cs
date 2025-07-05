@@ -22,7 +22,7 @@ public class GetNanosystemHandler(INanoSystemStorage nanoSystemStorage, IMapper 
         {
             throw new KeyNotFoundException("nanosystem not found");
         }
-        
-        return Result.Ok(mapper.Map<NanosystemDto>(nanosystem));
+
+        return FluentResults.Result.Ok(mapper.Map<NanosystemDto>(nanosystem));
     }
 }

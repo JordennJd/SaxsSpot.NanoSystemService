@@ -66,6 +66,6 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
 
         }
 
-        return Task.FromResult(Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind)));
+        return Task.FromResult(FluentResults.Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind)));
     }
 }

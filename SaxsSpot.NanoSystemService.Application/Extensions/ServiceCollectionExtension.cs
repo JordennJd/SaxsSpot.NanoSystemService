@@ -3,11 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Behaviors;
-using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 using SaxsSpot.NanoSystemService.Contracts.Services;
-using SaxsSpot.NanoSystemService.Storage;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
-using SaxsSpot.NanoSystemService.Storage.DbContexts;
 
 namespace SaxsSpot.NanoSystemService.Application.Extensions;
 
@@ -17,12 +13,8 @@ public static class ServiceCollectionExtension
     {
         var domain = AppDomain.CurrentDomain.GetAssemblies();
         
-        return services.AddDbContext<NanoSystemDbContext>()
-            .AddDbContext<NanoSystemSeriesDbContext>()
+        return services
             .AddScoped<INanoSystemService, Services.NanoSystemService>()
-            .AddScoped<INanoSystemStorage, NanoSystemStorage>()
-            .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
-            .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
             .AddLogging(cfg => cfg.AddConsole())
             .AddMediatR(cfg =>
                 {

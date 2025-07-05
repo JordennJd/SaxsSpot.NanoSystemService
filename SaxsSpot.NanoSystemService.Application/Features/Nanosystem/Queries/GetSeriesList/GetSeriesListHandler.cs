@@ -11,6 +11,6 @@ public class GetSeriesListHandler(INanoSystemSeriesStorage storage, IMapper mapp
 {
     public async Task<Result<Paging<NanosystemSeriesDto>>> Handle(GetSeriesListQuery request, CancellationToken cancellationToken)
     {
-        return Result.Ok(mapper.Map<Paging<NanosystemSeriesDto>>(await storage.Gridify(request.Query)));
+        return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemSeriesDto>>(await storage.Gridify(request.Query)));
     }
 }

@@ -9,17 +9,17 @@
     <ItemGroup>
         <ProjectReference Include="..\SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj" />
         <ProjectReference Include="..\SaxsSpot.NanoSystemService.Domain\SaxsSpot.NanoSystemService.Domain.csproj" />
-        <ProjectReference Include="..\SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="14.0.0" />
-        <PackageReference Include="FluentResults" Version="3.16.0" />
+        <PackageReference Include="AutoMapper" Version="15.0.0" />
+        <PackageReference Include="FluentResults" Version="4.0.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageReference Include="Gridify" Version="2.16.3" />
-        <PackageReference Include="MediatR" Version="12.5.0" />
+        <PackageReference Include="MediatR" Version="13.0.0" />
         <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.3.7" />
         <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="1.3.7" />
+        <PackageReference Include="SaxsSpot.Shared.ProgressTrackerClient" Version="1.0.5" />
         <PackageReference Include="SaxsSpot.Transport.Contracts" Version="1.0.33" />
         <PackageReference Include="SaxsSpot.Transport.MessageChannel.Contracts" Version="1.0.33" />
     </ItemGroup>

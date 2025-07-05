@@ -12,6 +12,11 @@ public class RunMassGenerationValidator : AbstractValidator<RunMassGenerationCom
     {
         RuleFor(x => x).Custom((parameters, context) =>
         {
+            if (parameters?.Parameters is null)
+            {
+                context.AddFailure("Parameters is invalid");
+            }
+            
             foreach (var option in parameters.Parameters.Options)
             {
                 switch (option.GetParticleKind())

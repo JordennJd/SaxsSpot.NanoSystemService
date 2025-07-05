@@ -1,6 +1,9 @@
 using SaxsSpot.NanoSystemService.Application.Extensions;
 using SaxsSpot.NanoSystemService.Host.Middlewares;
 using SaxsSpot.NanoSystemService.Host.Settings;
+using SaxsSpot.NanoSystemService.Storage.Extensions;
+using SaxsSpot.Shared.Authenticator.Extensions;
+using SaxsSpot.Shared.ProgressTrackerClient.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,10 +34,13 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services
-    .AddApplication(builder.Configuration);
+    .AddApplication(builder.Configuration)
+    .AddNanoSystemServiceStorage();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddAuthenticator(builder.Configuration);
+builder.Services.AddJobServiceClient(builder.Configuration);
 
 var app = builder.Build();
 

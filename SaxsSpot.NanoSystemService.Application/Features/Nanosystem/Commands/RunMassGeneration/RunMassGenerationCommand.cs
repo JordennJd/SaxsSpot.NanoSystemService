@@ -1,6 +1,7 @@
+using FluentResults;
 using MediatR;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 
-public record RunMassGenerationCommand(MassGenerateNanoSystemOptions Parameters) : IRequest<Guid>;
+public record RunMassGenerationCommand(MassGenerateNanoSystemOptions Parameters) : IRequest<Result<Guid>>;

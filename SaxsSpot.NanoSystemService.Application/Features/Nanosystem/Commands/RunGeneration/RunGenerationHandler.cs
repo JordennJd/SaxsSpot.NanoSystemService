@@ -1,3 +1,4 @@
+using FluentResults;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,9 +10,9 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.Ru
 /// Run single nanosystem generation
 /// </summary>
 /// <param name="nanoSystemService"></param>
-public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunGenerationHandler> logger) : IRequestHandler<RunGenerationCommand, Guid>
+public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunGenerationHandler> logger) : IRequestHandler<RunGenerationCommand, Result<Guid>>
 {
-    public async Task<Guid> Handle(RunGenerationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(RunGenerationCommand request, CancellationToken cancellationToken)
     {
         var operationGuid = Guid.NewGuid();
         

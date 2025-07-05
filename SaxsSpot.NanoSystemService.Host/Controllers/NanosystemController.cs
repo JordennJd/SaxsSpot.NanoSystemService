@@ -6,6 +6,7 @@ using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemList;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
@@ -15,17 +16,17 @@ namespace SaxsSpot.NanoSystemService.Host.Controllers;
 public class NanosystemController(IMediator mediator) : Controller
 {
     [HttpPost("run-generation")]
-    public async Task<IActionResult> RunParallelepipedGeneration([FromBody] CommonParticleGenerationParameters dto)
+    public async Task<IActionResult> RunGeneration([FromBody] CommonParticleGenerationParameters dto)
     {
-        _ = await mediator.Send(new RunGenerationCommand(dto));
-        return Ok();
+        var result = await mediator.Send(new RunGenerationCommand(dto));
+        return Ok(result.ValueOrDefault);
     }
     
     [HttpPost("run-mass-generation")]
-    public async Task<IActionResult> RunSphereGeneration([FromBody] MassGenerateNanoSystemOptions dto)
+    public async Task<IActionResult> RunMassGeneration([FromBody] MassGenerateNanoSystemOptions dto)
     {
-        _ = await mediator.Send(new RunMassGenerationCommand(dto));
-        return Ok();
+        var result = await mediator.Send(new RunMassGenerationCommand(dto));
+        return Ok(result.ValueOrDefault);
     }
 
 
@@ -40,6 +41,13 @@ public class NanosystemController(IMediator mediator) : Controller
     public async Task<IActionResult> GetNanosystemSeriesList([FromQuery] GridifyQuery query)
     {
         var result = await mediator.Send(new GetSeriesListQuery(query));
+        return Ok(result.ValueOrDefault);
+    }
+    
+    [HttpGet("get-nanosystem-list")]
+    public async Task<IActionResult> GetNanosystemList([FromQuery] GridifyQuery query)
+    {
+        var result = await mediator.Send(new GetNanosystemListQuery(query));
         return Ok(result.ValueOrDefault);
     }
     
