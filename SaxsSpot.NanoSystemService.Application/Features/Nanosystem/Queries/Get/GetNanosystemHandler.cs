@@ -12,9 +12,9 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get
 /// <param name="nanoSystemStorage"></param>
 /// <param name="mapper"></param>
 public class GetNanosystemHandler(INanoSystemStorage nanoSystemStorage, IMapper mapper)
-    : IRequestHandler<GetNanosystemQuery, Result<NanosystemDto>>
+    : IRequestHandler<GetNanosystemQuery, IResult<NanosystemDto>>
 {
-    public async Task<Result<NanosystemDto>> Handle(GetNanosystemQuery request, CancellationToken cancellationToken)
+    public async Task<IResult<NanosystemDto>> Handle(GetNanosystemQuery request, CancellationToken cancellationToken)
     {
         var nanosystem = await nanoSystemStorage.FirstOrDefaultAsync(x => x.Id == request.Id);
         

@@ -1,9 +1,4 @@
 services:
-  saxsspot:
-    image: jordenndev/saxsspot
-    build:
-      context: ../SaxsSpot.NanoSystemService.Database
-      dockerfile: Dockerfile
   db:
     image: postgres:latest
     container_name: db
@@ -16,10 +11,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
 
   minio:
     image: minio/minio:latest
     container_name: minio
+    ports:
+      - "9000:9000"    # S3 API
+      - "9001:9001"    # Web UI
     environment:
       MINIO_ROOT_USER: s3user
       MINIO_ROOT_PASSWORD: s3secretkey
@@ -39,7 +39,7 @@ services:
       
   liquibase:
     build:
-      context: ../SaxsSpot.NanoSystemService.Database
+      context: ../../SaxsSpot.NanoSystemService.Database
       dockerfile: Dockerfile
     container_name: liquibase_migrator
     depends_on:

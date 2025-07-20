@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemList;
@@ -56,5 +57,12 @@ public class NanosystemController(IMediator mediator) : Controller
     {
         var result = await mediator.Send(query);
         return Ok(result.ValueOrDefault);
+    }
+    
+    [HttpGet("download-nanosystem")]
+    public async Task<IActionResult> DownloadNanosystem([FromQuery] DownloadNanosystemQuery query)
+    {
+        var result = await mediator.Send(query);
+        return File(result.ValueOrDefault, "application/octet-stream", $"{query.Id}");
     }
 }

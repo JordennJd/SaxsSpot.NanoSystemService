@@ -4,4 +4,4 @@ using SaxsSpot.NanoSystemService.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
 
-public record GetNanosystemQuery(Guid Id) : IRequest<Result<NanosystemDto>>;
+public record GetNanosystemQuery(Guid Id) : IRequest<IResult<NanosystemDto>>;
