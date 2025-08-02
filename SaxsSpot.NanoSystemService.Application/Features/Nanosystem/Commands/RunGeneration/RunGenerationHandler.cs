@@ -21,7 +21,6 @@ public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<Run
             logger.Log(LogLevel.Information, $"Run generation started with operation id: {operationGuid}");
             
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            
             _ = Task.Run(() =>
             {
                 var scope = scopeFactory.CreateScope();

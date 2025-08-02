@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using SaxsSpot.Core.CommonObjectStorage.Engine;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 
 namespace SaxsSpot.NanoSystemService.Storage;
 

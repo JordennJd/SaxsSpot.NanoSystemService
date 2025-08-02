@@ -12,6 +12,6 @@
       </Reference>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.3.7" />
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.4.1" />
     </ItemGroup>
 </Project>

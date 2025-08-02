@@ -1,8 +1,8 @@
 using Gridify;
 using Gridify.EntityFramework;
 using SaxsSpot.Core.GenericStorage.Engine;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Domain;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
 
 namespace SaxsSpot.NanoSystemService.Storage;

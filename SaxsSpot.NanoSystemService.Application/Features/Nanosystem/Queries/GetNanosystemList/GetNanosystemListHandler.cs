@@ -3,8 +3,8 @@ using FluentResults;
 using Gridify;
 using MediatR;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Contracts.Models;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemList;
 
@@ -13,10 +13,5 @@ public class GetNanosystemListHandler(INanoSystemStorage storage, IMapper mapper
     public async Task<Result<Paging<NanosystemDto>>> Handle(GetNanosystemListQuery request, CancellationToken cancellationToken)
     {
         return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemDto>>(await storage.Gridify(request.Query)));
-    }
-
-    public Task<Result<Paging<NanosystemDto>>> Handle(GetNanosystemListProfile request, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
     }
 }

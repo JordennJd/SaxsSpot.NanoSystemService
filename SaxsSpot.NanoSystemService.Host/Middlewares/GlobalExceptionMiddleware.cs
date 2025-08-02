@@ -46,7 +46,13 @@ public class GlobalExceptionMiddleware
                         g => g.Select(e => e.ErrorMessage).ToArray()
                     );
                 break;
-
+            
+            case KeyNotFoundException keyNotFoundException:
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                problemDetails.Title = "Validation Error";
+                // problemDetails.Extensions["errors"] = keyNotFoundException.;
+                break;
+            
             // 3. Общий случай (500)
             default:
                 _logger.LogError(ex, "Unhandled exception");

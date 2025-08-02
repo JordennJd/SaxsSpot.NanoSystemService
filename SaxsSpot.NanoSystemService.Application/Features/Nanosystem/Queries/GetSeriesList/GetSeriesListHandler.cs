@@ -2,8 +2,8 @@ using AutoMapper;
 using FluentResults;
 using Gridify;
 using MediatR;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Contracts.Models;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
 

@@ -2,28 +2,21 @@ using AutoMapper;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Application.Services;
 
 using Contracts.Services;
 using Domain;
-using Storage.Contracts;
 
-public class NanoSystemService : INanoSystemService
+public class NanoSystemService(
+    INanoSystemObjectStorage objectStorage,
+    INanoSystemStorage storage,
+    INanoSystemSeriesStorage seriesStorage,
+    IMapper mapper)
+    : INanoSystemService
 {
-    private readonly INanoSystemStorage _storage;
-    private readonly INanoSystemSeriesStorage _seriesStorage;
-    private readonly INanoSystemObjectStorage _objectStorage;
-    private readonly IMapper _mapper;
-    public NanoSystemService(INanoSystemObjectStorage objectStorage, INanoSystemStorage storage, INanoSystemSeriesStorage seriesStorage, IMapper mapper)
-    {
-        _objectStorage = objectStorage;
-        _storage = storage;
-        _seriesStorage = seriesStorage;
-        _mapper = mapper;
-    }
-
     public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options, CancellationToken cancellationToken = default)
     {
         var generationParams = options.Options;
@@ -45,18 +38,18 @@ public class NanoSystemService : INanoSystemService
             switch (option.GetParticleKind())
             {
                 case ParticleKind.Parallelepiped:
-                    await RunGeneration(_mapper.Map<ParallelepipedGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
+                    await RunGeneration(mapper.Map<ParallelepipedGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
                     break;
                 case ParticleKind.Sphere:
-                    await RunGeneration(_mapper.Map<SphereGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
+                    await RunGeneration(mapper.Map<SphereGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
                     break;
             }
         }
 
-        var generatedSystems = (await _storage.WhereAsync(x => x.SeriesId == series.Id))
+        var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == series.Id))
             .ToList();
 
-        if (generationParams?.Any() is true)
+        if (generationParams.Any())
         {
             series.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
             series.MinParticleSizeTo = generatedSystems.Max(x => x.MinParticleSize);
@@ -70,7 +63,7 @@ public class NanoSystemService : INanoSystemService
             series.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
         }
 
-        await _seriesStorage.UpdateOrInsertAsync(series);
+        await seriesStorage.UpdateOrInsertAsync(series);
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
@@ -81,7 +74,7 @@ public class NanoSystemService : INanoSystemService
         
         var generator = new NanoSystemGenerator(options);
         var system = await generator.GenerateSystem();
-        var sumOfVolumes = system.Sum(x => x.GetVolume());
+
         var progress = new Progress<float>();
 
         if (progressHandler is not null)
@@ -92,7 +85,7 @@ public class NanoSystemService : INanoSystemService
         var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
         
         var generationZone = await generator.GetGenerationZone();
-        var entity = new Nanosystem()
+        var entity = new Nanosystem
         {
             ParticleKind = options.GetParticleKind(),
             ParticleCount = distributeParticles.Count,
@@ -112,7 +105,7 @@ public class NanoSystemService : INanoSystemService
             GenerationEnd = DateTime.Now.ToUniversalTime(),
         };
         
-        await _storage.UpdateOrInsertAsync(entity);
-        await _objectStorage.Save(distributeParticles, systemObjectGuid);
+        await storage.UpdateOrInsertAsync(entity);
+        await objectStorage.Save(distributeParticles, systemObjectGuid);
     }
 }

@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using SaxsSpot.NanoSystemService.Storage.Contracts;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
 
 namespace SaxsSpot.NanoSystemService.Storage.Extensions;

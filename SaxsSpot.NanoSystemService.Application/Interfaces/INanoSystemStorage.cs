@@ -2,7 +2,7 @@ using Gridify;
 using SaxsSpot.Core.Contracts.Services;
 using SaxsSpot.NanoSystemService.Domain;
 
-namespace SaxsSpot.NanoSystemService.Storage.Contracts;
+namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 
 public interface INanoSystemStorage : IGenericStorage<Nanosystem>
 {
