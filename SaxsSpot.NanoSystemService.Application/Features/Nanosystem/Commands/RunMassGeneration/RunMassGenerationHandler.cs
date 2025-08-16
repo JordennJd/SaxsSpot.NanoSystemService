@@ -17,7 +17,7 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.Ru
 /// <param name="logger"></param>
 public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunMassGenerationHandler> logger) : IRequestHandler<RunMassGenerationCommand, Result<Guid>>
 {
-    private readonly string jobType = "ManualRunMassGeneration";
+    private readonly string jobType = "manual-series-run";
     private readonly string message = "Nanosystem series generation";
 
     public async Task<Result<Guid>> Handle(RunMassGenerationCommand request, CancellationToken cancellationToken)

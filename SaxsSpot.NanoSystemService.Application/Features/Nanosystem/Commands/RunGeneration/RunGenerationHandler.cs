@@ -26,7 +26,7 @@ public class RunGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<Run
                 var scope = scopeFactory.CreateScope();
                 var nanoSystemService = scope.ServiceProvider.GetService<INanoSystemService>();
                 
-                return nanoSystemService.RunGeneration(request.Parameters,
+                return nanoSystemService!.RunGeneration(request.Parameters,
                     cancellationToken: cancellationTokenSource.Token);
             }, cancellationTokenSource.Token);
             

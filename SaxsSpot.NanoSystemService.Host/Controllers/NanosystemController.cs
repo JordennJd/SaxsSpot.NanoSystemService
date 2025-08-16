@@ -1,8 +1,6 @@
 using Gridify;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
-using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
@@ -11,6 +9,8 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNano
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemList;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
 using SaxsSpot.NanoSystemService.Contracts.Models;
+using FluentResults.Extensions.AspNetCore;
+using SaxsSpot.NanoSystemService.Host.Result;
 
 namespace SaxsSpot.NanoSystemService.Host.Controllers;
 
@@ -71,6 +71,11 @@ public class NanosystemController(IMediator mediator) : Controller
     public async Task<IActionResult> GetNanosystemCalculationParameters([FromQuery] GetNanosystemCalculationParametersQuery query)
     {
         var result = await mediator.Send(query);
-        return Ok(result.ValueOrDefault);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+        
+        return Ok(result.ToResultDto());
     }
 }

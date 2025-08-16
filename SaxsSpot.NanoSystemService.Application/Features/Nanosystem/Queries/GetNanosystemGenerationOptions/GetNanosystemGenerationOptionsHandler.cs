@@ -20,7 +20,6 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
 
         var parametersList = new List<CommonParticleGenerationParameters>();
 
-        // Генерация интерполированных значений с помощью MathNet
         var particleCounts = Generate.LinearSpaced(count, r.ParticleCountFrom, r.ParticleCountTo).Select(v => (int)v)
             .ToArray();
         var minSizes = Generate.LinearSpaced(count, r.MinParticleSizeFrom, r.MinParticleSizeTo);
