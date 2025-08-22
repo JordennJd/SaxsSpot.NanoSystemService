@@ -43,8 +43,8 @@ public class GetNanosystemCalculationParametersHandler(INanoSystemStorage storag
             {
                 if (particle is Parallelepiped parallelepiped)
                 {
-                    sqrPariclesVolume += parallelepiped.GetVolume();
-                    pariclesVolume += MathF.Pow(parallelepiped.GetVolume(), 2);
+                    pariclesVolume += parallelepiped.GetVolume();
+                    sqrPariclesVolume += MathF.Pow(parallelepiped.GetVolume(), 2);
                     amplitudes[index] = new Amplitude([parallelepiped.X, parallelepiped.Y, parallelepiped.Z],
                         parallelepiped.GetAmplitude());
                     index++;
