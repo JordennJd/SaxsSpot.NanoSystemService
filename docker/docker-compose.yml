@@ -1,5 +1,5 @@
 services:
-  saxsspot:
+  saxsspot-nanosystem-service:
     image: jordenndev/saxsspot
     build:
       context: ../SaxsSpot.NanoSystemService.Database
