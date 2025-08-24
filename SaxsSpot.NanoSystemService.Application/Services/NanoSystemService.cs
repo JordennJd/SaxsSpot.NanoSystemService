@@ -17,7 +17,8 @@ public class NanoSystemService(
     IMapper mapper)
     : INanoSystemService
 {
-    public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options, CancellationToken cancellationToken = default)
+    public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options,
+        CancellationToken cancellationToken = default, EventHandler<int>? progressHandler = null)
     {
         var generationParams = options.Options;
 
@@ -32,7 +33,9 @@ public class NanoSystemService(
             ThetaFrom = generationParams.Min(x => x.Theta),
             ThetaTo = generationParams.Max(x => x.Theta),
         };
+        await seriesStorage.UpdateOrInsertAsync(series);
 
+        var handled = 0;
         foreach (var option in generationParams)
         {
             switch (option.GetParticleKind())
@@ -44,26 +47,28 @@ public class NanoSystemService(
                     await RunGeneration(mapper.Map<SphereGenerationParameters>(option), seriesId: series.Id, cancellationToken: cancellationToken);
                     break;
             }
+            
+            var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == series.Id))
+                .ToList();
+
+            if (generationParams.Any())
+            {
+                series.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
+                series.MinParticleSizeTo = generatedSystems.Max(x => x.MinParticleSize);
+                series.MaxParticleSizeFrom = generatedSystems.Min(x => x.MaxParticleSize);
+                series.MaxParticleSizeTo = generatedSystems.Max(x => x.MaxParticleSize);
+                series.GlobalSizeFrom = generatedSystems.Min(x => x.GlobalSize);
+                series.GlobalSizeTo = generatedSystems.Max(x => x.GlobalSize);
+                series.ParticleCountFrom = generatedSystems.Min(x => x.ParticleCount);
+                series.ParticleCountTo = generatedSystems.Max(x => x.ParticleCount);
+                series.NumericalConcentrationFrom = generatedSystems.Min(x => x.NumericalConcentration);
+                series.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
+            }
+
+            await seriesStorage.UpdateOrInsertAsync(series);
+            handled++;
+            progressHandler?.Invoke(this, handled);
         }
-
-        var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == series.Id))
-            .ToList();
-
-        if (generationParams.Any())
-        {
-            series.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
-            series.MinParticleSizeTo = generatedSystems.Max(x => x.MinParticleSize);
-            series.MaxParticleSizeFrom = generatedSystems.Min(x => x.MaxParticleSize);
-            series.MaxParticleSizeTo = generatedSystems.Max(x => x.MaxParticleSize);
-            series.GlobalSizeFrom = generatedSystems.Min(x => x.GlobalSize);
-            series.GlobalSizeTo = generatedSystems.Max(x => x.GlobalSize);
-            series.ParticleCountFrom = generatedSystems.Min(x => x.ParticleCount);
-            series.ParticleCountTo = generatedSystems.Max(x => x.ParticleCount);
-            series.NumericalConcentrationFrom = generatedSystems.Min(x => x.NumericalConcentration);
-            series.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
-        }
-
-        await seriesStorage.UpdateOrInsertAsync(series);
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,

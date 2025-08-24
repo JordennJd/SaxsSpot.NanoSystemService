@@ -65,7 +65,19 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
                     }
 
                     await nanoSystemService.RunSeriesGeneration(request.Parameters,
-                        cancellationToken: cancellationTokenSource.Token);
+                        cancellationToken: cancellationTokenSource.Token, async delegate(object? sender, int count)
+                        {
+                            try
+                            {
+                                await jobService.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                                    operationGuid.ToString(),
+                                    $"Generated {count}/{request.Parameters.Options.Count}"));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogError(ex, ex.Message);
+                            }
+                        });
 
                     result = await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
                         $"Operation with id {operationGuid} completed successfully"));
