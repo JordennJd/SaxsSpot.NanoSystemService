@@ -3,7 +3,7 @@ using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 
 namespace SaxsSpot.NanoSystemService.Contracts.Models;
 
-public record CommonParticleGenerationParameters(int Count, float? NumericalConcentration, float? GlobalSize, float MinSize, float MaxSize, float Theta, float K, float Excess, float? Epsilon)
+public record CommonParticleGenerationParameters(int Count, double? NumericalConcentration, double? GlobalSize, float MinSize, float MaxSize, float Theta, float K, double Excess, float? Epsilon)
     : ParticleGenerationParameters(Count, NumericalConcentration, GlobalSize, MinSize, MaxSize, Theta, K, Excess)
 {
 

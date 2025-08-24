@@ -1,9 +1,9 @@
 namespace SaxsSpot.NanoSystemService.Contracts.Models;
 
 public record NanosystemCalculationParametersDto(
-    float ParticleVolumeSum,
-    float SqrParticleVolumeSum,
+    double ParticleVolumeSum,
+    double SqrParticleVolumeSum,
     Amplitude[] Amplitudes,
-    float SystemSize);
+    double SystemSize);
     
-public record Amplitude(float[] Vector, float Value);
+public record Amplitude(double[] Vector, double Value);

@@ -21,22 +21,22 @@ public class NanosystemSeries
     public int ParticleCountTo { get; set; }
 
     [Column("global_size_from")]
-    public float GlobalSizeFrom { get; set; }
+    public double GlobalSizeFrom { get; set; }
 
     [Column("global_size_to")]
-    public float GlobalSizeTo { get; set; }
+    public double GlobalSizeTo { get; set; }
 
     [Column("numerical_concentration_from")]
-    public float NumericalConcentrationFrom { get; set; }
+    public double NumericalConcentrationFrom { get; set; }
 
     [Column("numerical_concentration_to")]
-    public float NumericalConcentrationTo { get; set; }
+    public double NumericalConcentrationTo { get; set; }
 
     [Column("excess_from")]
-    public float? ExcessFrom { get; set; }
+    public double? ExcessFrom { get; set; }
 
     [Column("excess_to")]
-    public float? ExcessTo { get; set; }
+    public double? ExcessTo { get; set; }
 
     [Column("max_particle_size_from")]
     public float MaxParticleSizeFrom { get; set; }

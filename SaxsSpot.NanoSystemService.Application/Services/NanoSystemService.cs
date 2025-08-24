@@ -74,12 +74,12 @@ public class NanoSystemService(
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
         CancellationToken cancellationToken = default, Guid seriesId = default)
     {
-        var generationStartDate = DateTime.Now.ToUniversalTime();
         var systemObjectGuid = Guid.NewGuid();
         
         var generator = new NanoSystemGenerator(options);
+        var generationStartDate = DateTime.Now.ToUniversalTime();
         var system = await generator.GenerateSystem();
-
+        var generationEndDate = DateTime.Now.ToUniversalTime();
         var progress = new Progress<float>();
 
         if (progressHandler is not null)
@@ -107,7 +107,8 @@ public class NanoSystemService(
             MinParticleSize = system.MinBy(x => x.GetParticleSize())!.GetParticleSize(),
             MaxParticleSize = system.MaxBy(x => x.GetParticleSize())!.GetParticleSize(),
             ObjectId = systemObjectGuid,
-            GenerationEnd = DateTime.Now.ToUniversalTime(),
+            GenerationEnd = generationEndDate,
+            InputDate = DateTime.Now.ToUniversalTime()
         };
         
         await storage.UpdateOrInsertAsync(entity);

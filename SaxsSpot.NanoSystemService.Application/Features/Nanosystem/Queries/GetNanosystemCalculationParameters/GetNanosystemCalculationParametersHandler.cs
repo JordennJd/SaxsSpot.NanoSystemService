@@ -34,8 +34,8 @@ public class GetNanosystemCalculationParametersHandler(INanoSystemStorage storag
             }
 
             var particles = objectStorage.Load(nanosystem.ObjectId);
-            var pariclesVolume = 0f;
-            var sqrPariclesVolume = 0f;
+            var pariclesVolume = 0d;
+            var sqrPariclesVolume = 0d;
             var amplitudes = new Amplitude[nanosystem.ParticleCount];
             int index = 0;
 
@@ -44,7 +44,7 @@ public class GetNanosystemCalculationParametersHandler(INanoSystemStorage storag
                 if (particle is Parallelepiped parallelepiped)
                 {
                     pariclesVolume += parallelepiped.GetVolume();
-                    sqrPariclesVolume += MathF.Pow(parallelepiped.GetVolume(), 2);
+                    sqrPariclesVolume += Math.Pow(parallelepiped.GetVolume(), 2);
                     amplitudes[index] = new Amplitude([parallelepiped.X, parallelepiped.Y, parallelepiped.Z],
                         parallelepiped.GetAmplitude());
                     index++;

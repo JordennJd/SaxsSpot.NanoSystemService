@@ -27,16 +27,16 @@ public class Nanosystem
     public int ParticleCount { get; set; }
     
     [Column("global_size")]
-    public float GlobalSize { get; set; }
+    public double GlobalSize { get; set; }
     
     [Column("generation_zone_volume")]
-    public float GenerationZoneVolume { get; set; }
+    public double GenerationZoneVolume { get; set; }
     
     [Column("generation_zone_form")]
     public GenerationZoneForm GenerationZoneForm { get; set; }
 
     [Column("numerical_concentration")]
-    public float NumericalConcentration { get; set; }
+    public double NumericalConcentration { get; set; }
     
     [Column("max_particle_size")]
     public float MaxParticleSize { get; set; }
@@ -45,7 +45,7 @@ public class Nanosystem
     public float MinParticleSize { get; set; }
     
     [Column("excess")]
-    public float Excess { get; set; }
+    public double Excess { get; set; }
     
     [Column("k")]
     public float K { get; set; }

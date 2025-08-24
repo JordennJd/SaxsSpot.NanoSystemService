@@ -17,8 +17,8 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageReference Include="Gridify" Version="2.16.3" />
         <PackageReference Include="MediatR" Version="13.0.0" />
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.4.2" />
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="1.4.2" />
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="1.6.0" />
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="1.6.0" />
         <PackageReference Include="SaxsSpot.Shared.ProgressTrackerClient" Version="1.0.8" />
         <PackageReference Include="SaxsSpot.Transport.Contracts" Version="1.0.33" />
         <PackageReference Include="SaxsSpot.Transport.MessageChannel.Contracts" Version="1.0.33" />
