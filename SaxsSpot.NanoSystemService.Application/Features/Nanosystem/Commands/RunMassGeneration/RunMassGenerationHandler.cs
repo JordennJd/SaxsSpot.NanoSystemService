@@ -32,11 +32,11 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
             
             _ = Task.Run(async () =>
             {
+                var scope = scopeFactory.CreateScope();
+                var nanoSystemService = scope.ServiceProvider.GetService<INanoSystemService>();
+                var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
                 try
                 {
-                    var scope = scopeFactory.CreateScope();
-                    var nanoSystemService = scope.ServiceProvider.GetService<INanoSystemService>();
-                    var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
 
                     var workingJobs = await jobService.GetWorkingJobsAsync(new JobModels.GetWorkingJobRequest(jobType));
 
@@ -89,6 +89,12 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
                             $" on remote server {result.ErrorMessage}");
                     }
                 }
+                catch (OperationCanceledException ex)
+                {
+                    logger.LogInformation($"Operation cancelled with id {operationGuid}" + ex.Message);
+                    _ = await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(
+                        operationGuid.ToString(), "Operation canceled", true));
+                }
                 catch (RpcException ex)
                 {
                     logger.LogCritical("Remote service is not working with error on remote server: " + ex.Message);
@@ -96,18 +102,13 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
 
                 }
                 catch (InvalidOperationException ex)
-                {
-                    var scope = scopeFactory.CreateScope();
-
-                    var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
+                { 
                     logger.LogError(
                         ex.Message);
                     _ = await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(
                         operationGuid.ToString(), ex.Message, true));
                     throw;
                 }
-
-                
             }, cancellationTokenSource.Token);
             
             return operationGuid;
