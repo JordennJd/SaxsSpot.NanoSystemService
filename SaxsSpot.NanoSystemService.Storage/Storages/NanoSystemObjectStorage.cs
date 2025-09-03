@@ -29,13 +29,12 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
         string? str;
         while ((str = streamReader.ReadLine()) != null)
         {
-            var splitted = str.Split(' ');
-
+            var splitted = str.Replace('.', ',').Split(' ');
             switch (splitted.Length)
             {
                 case 4: //Sphere
-                    yield return new Sphere(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),
-                        float.Parse(splitted[3]));
+                    yield return new Sphere(float.Parse(splitted[3]), float.Parse(splitted[0]), float.Parse(splitted[1]),
+                        float.Parse(splitted[2]));
                     break;
                 case 8: //Parallelepiped
                     yield return new Parallelepiped(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),

@@ -56,8 +56,8 @@ public class GetNanosystemCalculationParametersHandler(INanoSystemStorage storag
         }
         catch (Exception ex)
         {
-            logger.Log(LogLevel.Error, $"requested invalid nanosystem: {request.NanosystemId} (particle kind must be Parallelepiped)");
-            return FluentResults.Result.Fail<NanosystemCalculationParametersDto>(new Error("Invalid nanosystem"));
+            logger.Log(LogLevel.Error, ex.ToString());
+            return FluentResults.Result.Fail<NanosystemCalculationParametersDto>(new Error(ex.Message));
         }
     }
     

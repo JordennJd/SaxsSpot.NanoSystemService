@@ -10,6 +10,7 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNano
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 using FluentResults.Extensions.AspNetCore;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSphereScatteringCalculationParameters;
 using SaxsSpot.NanoSystemService.Host.Result;
 
 namespace SaxsSpot.NanoSystemService.Host.Controllers;
@@ -69,6 +70,18 @@ public class NanosystemController(IMediator mediator) : Controller
     
     [HttpGet("nanosystem-calculation-parameters")]
     public async Task<IActionResult> GetNanosystemCalculationParameters([FromQuery] GetNanosystemCalculationParametersQuery query)
+    {
+        var result = await mediator.Send(query);
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+        
+        return Ok(result.ToResultDto());
+    }
+    
+    [HttpGet("sphere-scattering-calculation-parameters")]
+    public async Task<IActionResult> GetSphereScatteringCalculationParameters([FromQuery] GetSphereScatteringCalculationParametersQuery query)
     {
         var result = await mediator.Send(query);
         if (result.IsFailed)
