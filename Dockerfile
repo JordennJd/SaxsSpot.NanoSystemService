@@ -9,6 +9,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 ARG CRT_PATH
+RUN echo "192.168.0.101 local.devspot.tech" >> /etc/hosts
 
 COPY "$CRT_PATH" /usr/local/share/ca-certificates/devspot-rootCA.crt
 RUN update-ca-certificates
