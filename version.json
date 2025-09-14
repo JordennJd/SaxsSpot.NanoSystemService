@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "buildNumber": 3,
-    "lastBuild": "2025-09-14 17:43:14",
+    "buildNumber": 4,
+    "lastBuild": "2025-09-14 17:52:00",
     "dockerImage": "jordenndev/saxsspot-nanosystem-service"
 }
