@@ -8,10 +8,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-ARG CRT_PATH
+COPY local.devspot.tech.pem /usr/local/share/ca-certificates/
 
-COPY "$CRT_PATH" /usr/local/share/ca-certificates/devspot-rootCA.crt
-RUN update-ca-certificates
 
 COPY ["SaxsSpot.NanoSystemService.Host/SaxsSpot.NanoSystemService.Host.csproj", "SaxsSpot.NanoSystemService.Host/"]
 COPY ["SaxsSpot.NanoSystemService.Application/SaxsSpot.NanoSystemService.Application.csproj", "SaxsSpot.NanoSystemService.Application/"]
