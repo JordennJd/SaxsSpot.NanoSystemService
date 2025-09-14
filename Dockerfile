@@ -10,6 +10,7 @@ WORKDIR /src
 
 ARG CRT_PATH
 
+COPY /usr/local/share/ca-certificates/ /usr/local/share/ca-certificates/
 COPY "$CRT_PATH" /usr/local/share/ca-certificates/devspot-rootCA.crt
 RUN update-ca-certificates
 
