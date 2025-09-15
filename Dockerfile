@@ -10,8 +10,8 @@ WORKDIR /src
 
 ARG CRT_PATH
 
-COPY local.devspot.tech.pem /usr/local/share/ca-certificates/devspot-rootCA.crt
-RUN update-ca-certificates
+COPY "$CRT_PATH" /usr/local/share/ca-certificates/devspot-rootCA.crt
+RUN update-ca-certificates \
 
 COPY ["SaxsSpot.NanoSystemService.Host/SaxsSpot.NanoSystemService.Host.csproj", "SaxsSpot.NanoSystemService.Host/"]
 COPY ["SaxsSpot.NanoSystemService.Application/SaxsSpot.NanoSystemService.Application.csproj", "SaxsSpot.NanoSystemService.Application/"]
@@ -33,4 +33,4 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "SaxsSpot.NanoSystemService.Host.dll"]
-#docker build --build-arg CRT_PATH="local.devspot.tech.pem" . -t "jordenndev/saxsspot-nanosystem-service"
+# docker build --build-arg CRT_PATH="local.devspot.tech.pem" . -t "jordenndev/saxsspot-nanosystem-service"
