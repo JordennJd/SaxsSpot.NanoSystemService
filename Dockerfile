@@ -9,8 +9,9 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 RUN --mount=type=secret,id=cert,target=/tmp/cert.pem \
-    && cp /tmp/cert.pem /usr/local/share/ca-certificates/local.devspot.tech.pem \
+    cp /tmp/cert.pem /usr/local/share/ca-certificates/local.devspot.tech.pem \
     && update-ca-certificates
+
 
 COPY ["SaxsSpot.NanoSystemService.Host/SaxsSpot.NanoSystemService.Host.csproj", "SaxsSpot.NanoSystemService.Host/"]
 COPY ["SaxsSpot.NanoSystemService.Application/SaxsSpot.NanoSystemService.Application.csproj", "SaxsSpot.NanoSystemService.Application/"]
