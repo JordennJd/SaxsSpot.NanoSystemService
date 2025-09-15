@@ -9,7 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 RUN --mount=type=secret,id=cert,target=/tmp/cert.pem \
-    cp /tmp/cert.pem /usr/local/share/ca-certificates/local.devspot.tech.pem \
+    cp /tmp/cert.pem /usr/local/share/ca-certificates/local.devspot.tech.crt \
+    && chmod 644 /usr/local/share/ca-certificates/local.devspot.tech.crt \
     && update-ca-certificates
 
 
