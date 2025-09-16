@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.Extensions.Configuration;
 using SaxsSpot.Core.CommonObjectStorage.Engine;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
@@ -29,12 +30,16 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
         string? str;
         while ((str = streamReader.ReadLine()) != null)
         {
-            var splitted = str.Replace('.', ',').Split(' ');
+            string CultureName = Thread.CurrentThread.CurrentCulture.Name;
+            CultureInfo ci = new CultureInfo(CultureName);
+            
+            var splitted = str.Split(ci.NumberFormat.NumberDecimalSeparator);
+            
             switch (splitted.Length)
             {
                 case 4: //Sphere
-                    yield return new Sphere(float.Parse(splitted[3]), float.Parse(splitted[0]), float.Parse(splitted[1]),
-                        float.Parse(splitted[2]));
+                    yield return new Sphere(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),
+                        float.Parse(splitted[3]));
                     break;
                 case 8: //Parallelepiped
                     yield return new Parallelepiped(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),
