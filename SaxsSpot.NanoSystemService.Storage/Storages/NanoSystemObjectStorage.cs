@@ -38,13 +38,20 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
             switch (splitted.Length)
             {
                 case 4: //Sphere
-                    yield return new Sphere(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),
-                        float.Parse(splitted[3]));
+                    yield return new Sphere(float.Parse(splitted[0], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[1], CultureInfo.InvariantCulture)
+                        , float.Parse(splitted[2], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[3], CultureInfo.InvariantCulture));
                     break;
                 case 8: //Parallelepiped
-                    yield return new Parallelepiped(float.Parse(splitted[0]), float.Parse(splitted[1]), float.Parse(splitted[2]),
-                        float.Parse(splitted[3]), float.Parse(splitted[4]), float.Parse(splitted[5]), float.Parse(splitted[6])
-                        , float.Parse(splitted[7]));
+                    yield return new Parallelepiped(float.Parse(splitted[0], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[1], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[2], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[3], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[4], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[5], CultureInfo.InvariantCulture),
+                        float.Parse(splitted[6], CultureInfo.InvariantCulture)
+                        , float.Parse(splitted[7], CultureInfo.InvariantCulture));
                     break;
             }
         }
