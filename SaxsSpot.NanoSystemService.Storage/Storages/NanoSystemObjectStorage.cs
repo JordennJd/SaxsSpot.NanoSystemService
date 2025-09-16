@@ -32,8 +32,8 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
         {
             string CultureName = Thread.CurrentThread.CurrentCulture.Name;
             CultureInfo ci = new CultureInfo(CultureName);
-            
-            var splitted = str.Split(ci.NumberFormat.NumberDecimalSeparator);
+            //TODO
+            var splitted = str.Split(" ");
             
             switch (splitted.Length)
             {

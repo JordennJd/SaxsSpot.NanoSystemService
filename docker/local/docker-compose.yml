@@ -1,7 +1,7 @@
 services:
-  db:
+  nanosystem-db:
     image: postgres:latest
-    container_name: db
+    container_name: nanosystem-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,20 +29,21 @@ services:
     image: postgres:latest
     container_name: db-init-nanosystem
     depends_on:
-      db:
+      nanosystem-db:
         condition: service_healthy
     environment:
       PGPASSWORD: postgres
     entrypoint: >
-      bash -c "until pg_isready -h db -U postgres; do sleep 1; done &&
-               psql -h db -U postgres -d saxs -c 'CREATE SCHEMA IF NOT EXISTS saxs;'"
+      bash -c "until pg_isready -h nanosystem-db -U postgres; do sleep 1; done &&
+               psql -h nanosystem-db -U postgres -d saxs -c 'CREATE SCHEMA IF NOT EXISTS saxs;'"
       
   liquibase-nanosystem:
     build:
       context: ../../SaxsSpot.NanoSystemService.Database
       dockerfile: Dockerfile
+    image: jordenndev/saxsspot-liquibase-nanosystem
     depends_on:
-      db:
+      nanosystem-db:
         condition: service_healthy
       db-init-nanosystem:
         condition: service_completed_successfully
