@@ -17,6 +17,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SaxsSpot.NanoSystemService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Host", "SaxsSpot.NanoSystemService.Host\SaxsSpot.NanoSystemService.Host.csproj", "{21419C2A-92B3-4825-9FFF-1433D3672A47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Sdk", "SaxsSpot.NanoSystemService.Sdk\SaxsSpot.NanoSystemService.Sdk.csproj", "{5B46AC12-83FE-4E6A-9381-35D6A19B2EDD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.IntegrationTests", "tests\SaxsSpot.NanoSystemService.IntegrationTests\SaxsSpot.NanoSystemService.IntegrationTests.csproj", "{5FCBD34B-D41B-4450-B7A3-7B6B24246EF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,5 +55,13 @@ Global
 		{0A1A4061-FD3F-49E7-9D1E-3737A520370D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A1A4061-FD3F-49E7-9D1E-3737A520370D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A1A4061-FD3F-49E7-9D1E-3737A520370D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B46AC12-83FE-4E6A-9381-35D6A19B2EDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B46AC12-83FE-4E6A-9381-35D6A19B2EDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B46AC12-83FE-4E6A-9381-35D6A19B2EDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B46AC12-83FE-4E6A-9381-35D6A19B2EDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FCBD34B-D41B-4450-B7A3-7B6B24246EF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FCBD34B-D41B-4450-B7A3-7B6B24246EF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FCBD34B-D41B-4450-B7A3-7B6B24246EF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FCBD34B-D41B-4450-B7A3-7B6B24246EF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

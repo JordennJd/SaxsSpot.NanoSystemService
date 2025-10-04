@@ -4,7 +4,7 @@ using SaxsSpot.Core.CommonObjectStorage.Engine;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
 using SaxsSpot.NanoSystemService.Application.Interfaces;
 
-namespace SaxsSpot.NanoSystemService.Storage;
+namespace SaxsSpot.NanoSystemService.Storage.Storages;
 
 public class NanoSystemObjectStorage(IConfiguration configuration)
     : CommonObjectStorage<Particle>(configuration), INanoSystemObjectStorage

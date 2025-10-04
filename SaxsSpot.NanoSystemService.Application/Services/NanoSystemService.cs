@@ -79,7 +79,6 @@ public class NanoSystemService(
         var generator = new NanoSystemGenerator(options);
         var generationStartDate = DateTime.Now.ToUniversalTime();
         var system = await generator.GenerateSystem();
-        var generationEndDate = DateTime.Now.ToUniversalTime();
         var progress = new Progress<float>();
 
         if (progressHandler is not null)
@@ -90,6 +89,8 @@ public class NanoSystemService(
         var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
         
         var generationZone = await generator.GetGenerationZone();
+        var generationEndDate = DateTime.Now.ToUniversalTime();
+
         var entity = new Nanosystem
         {
             ParticleKind = options.GetParticleKind(),
