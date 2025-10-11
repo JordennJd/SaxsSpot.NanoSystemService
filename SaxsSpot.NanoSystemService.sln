@@ -8,8 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.Storage", "SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj", "{3E8730FB-4B48-4741-BA29-69A88E108BC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaxsSpot.NanoSystemService.ConsoleApp", "SaxsSpot.NanoSystemService.ConsoleApp\SaxsSpot.NanoSystemService.ConsoleApp.csproj", "{2595B18C-0FE7-459C-BD29-6ACB901EABDF}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SaxsSpot.NanoSystemService.Database", "SaxsSpot.NanoSystemService.Database", "{99DDC894-35A6-44DA-B045-FA76AA909676}"
 	ProjectSection(SolutionItems) = preProject
 		SaxsSpot.NanoSystemService.Database\config.xml = SaxsSpot.NanoSystemService.Database\config.xml
@@ -43,10 +41,6 @@ Global
 		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E8730FB-4B48-4741-BA29-69A88E108BC4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2595B18C-0FE7-459C-BD29-6ACB901EABDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21419C2A-92B3-4825-9FFF-1433D3672A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{21419C2A-92B3-4825-9FFF-1433D3672A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21419C2A-92B3-4825-9FFF-1433D3672A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
