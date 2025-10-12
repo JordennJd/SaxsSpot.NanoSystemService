@@ -23,12 +23,12 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
         return stream;
     }
 
-    protected override IEnumerable<Particle> FromStream(Stream data)
+    protected override async IAsyncEnumerable<Particle> FromStreamAsync(Stream data)
     {
         using var streamReader = new StreamReader(data, leaveOpen: true);
         
         string? str;
-        while ((str = streamReader.ReadLine()) != null)
+        while ((str = await streamReader.ReadLineAsync()) != null)
         {
             string CultureName = Thread.CurrentThread.CurrentCulture.Name;
             CultureInfo ci = new CultureInfo(CultureName);

@@ -35,3 +35,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "SaxsSpot.NanoSystemService.Host.dll"]
 # docker build --build-arg CRT_PATH="local.devspot.tech.pem" . -t "jordenndev/saxsspot-nanosystem-service"
+#docker build --secret id=cert,src=local.devspot.tech.pem .
