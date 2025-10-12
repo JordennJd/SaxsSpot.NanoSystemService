@@ -34,7 +34,7 @@ public class GetSphereScatteringCalculationParametersHandler(INanoSystemStorage 
                 throw new ArgumentException("Invalid nanosystem (particle kind must be Sphere)");
             }
 
-            var particles = objectStorage.Load(nanosystem.ObjectId);
+            var particles = objectStorage.Load(nanosystem.ObjectId, cancellationToken);
             var sqrPariclesVolume = 0d;
             var sphereParameters = new SphereParameter[nanosystem.ParticleCount];
             var index = 0;

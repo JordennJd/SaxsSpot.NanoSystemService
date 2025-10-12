@@ -33,7 +33,7 @@ public class GetNanosystemCalculationParametersHandler(INanoSystemStorage storag
                 throw new ArgumentException("Invalid nanosystem (particle kind must be Parallelepiped)");
             }
 
-            var particles = objectStorage.Load(nanosystem.ObjectId);
+            var particles = objectStorage.Load(nanosystem.ObjectId, cancellationToken);
             var pariclesVolume = 0d;
             var sqrPariclesVolume = 0d;
             var amplitudes = new Amplitude[nanosystem.ParticleCount];
