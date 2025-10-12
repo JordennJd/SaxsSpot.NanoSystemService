@@ -10,7 +10,7 @@ public class DownloadNanosystemHandler(INanoSystemObjectStorage storage, INanoSy
     public async Task<IResult<Stream>> Handle(DownloadNanosystemQuery request, CancellationToken cancellationToken)
     {
         var system = await systemStorage.FirstOrDefaultAsync(x => x.Id == request.Id);
-        var data = storage.Load(system.ObjectId);
+        var data = storage.Load(system.ObjectId, cancellationToken);
         await using var sw = new StreamWriter(new MemoryStream());
 
         var stream = await NanosystemWriter.Write(data, system);
