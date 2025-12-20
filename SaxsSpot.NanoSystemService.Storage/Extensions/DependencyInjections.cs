@@ -9,11 +9,15 @@ public static class DependencyInjections
 {
     public static IServiceCollection AddNanoSystemServiceStorage(this IServiceCollection services)
     {
-     
+
         return services.AddDbContext<NanoSystemDbContext>()
-            .AddDbContext<NanoSystemSeriesDbContext>()
-            .AddScoped<INanoSystemStorage, NanoSystemStorage>()
-            .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
-            .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>();
+                .AddDbContext<NanoSystemSeriesDbContext>()
+                .AddDbContext<RadialAnalysisDbContext>()
+                .AddScoped<INanoSystemStorage, NanoSystemStorage>()
+                .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
+                .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
+                .AddScoped<IRadialAnalysisStorage, RadialAnalysisStorage>()
+                .AddScoped<IRadialAnalysisObjectStorage, RadialAnalysisObjectStorage>()
+            ;
     }
 }

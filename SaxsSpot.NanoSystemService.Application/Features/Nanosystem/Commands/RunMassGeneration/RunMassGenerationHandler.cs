@@ -32,7 +32,7 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
             
             _ = Task.Run(async () =>
             {
-                var scope = scopeFactory.CreateScope();
+                using var scope = scopeFactory.CreateScope();
                 var nanoSystemService = scope.ServiceProvider.GetService<INanoSystemService>();
                 var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
                 try

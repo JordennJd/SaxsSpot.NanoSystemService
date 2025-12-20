@@ -5,9 +5,5 @@ using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Storage.DbContexts;
 
-public class NanoSystemSeriesDbContext : GenericDbContext<NanosystemSeries> 
-{
-    public NanoSystemSeriesDbContext(IConfiguration configuration) : base(configuration)
-    {
-    }
-}
+public class NanoSystemSeriesDbContext(IConfiguration configuration)
+    : GenericDbContext<NanosystemSeries>(configuration);
