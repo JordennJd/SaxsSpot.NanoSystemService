@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FluentResults;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,11 +41,24 @@ public class RunRadialAnalysisHandler(
             var radialAnalysisStorage = scope.ServiceProvider.GetService<IRadialAnalysisStorage>();
 
             var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
-            await jobService!.CreateJobAsync(new JobModels.CreateJobQuery(operationGuid.ToString(), JobType,
-                "radial analysis started", request.ToString()));
+            var result = await jobService!.CreateJobAsync(new JobModels.CreateJobQuery(operationGuid.ToString(), JobType,
+                "radial analysis started", JsonSerializer.Serialize(request)));
+            
+            if (result.IsSuccessful is false)
+            {
+                throw new InvalidOperationException(
+                    $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
+            }
 
             try
             {
+                result = await jobService.StartJobAsync(new JobModels.StartJobQuery(operationGuid.ToString()));
+                if (result.IsSuccessful is false)
+                {
+                    throw new InvalidOperationException(
+                        $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
+                }
+                
                 ICollection<ZoneConcentrationAnalyze> analysis;
                 if (nanosystem.ParticleKind == ParticleKind.Parallelepiped)
                 {
@@ -54,7 +68,7 @@ public class RunRadialAnalysisHandler(
                         new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
                         request.PointCount);
                 }
-                else
+                else 
                 {
                     analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
                             .ToBlockingEnumerable()
