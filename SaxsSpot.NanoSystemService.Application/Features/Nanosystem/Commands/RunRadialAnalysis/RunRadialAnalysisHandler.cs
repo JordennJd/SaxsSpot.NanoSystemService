@@ -33,6 +33,7 @@ public class RunRadialAnalysisHandler(
         
         var nanosystemObject = nanosystemObjectStorage.Load(nanosystem.ObjectId, cancellationToken);
         var operationGuid = Guid.NewGuid();
+        var inputDate = DateTime.UtcNow;
         _ = Task.Run(async () =>
         {
             using var scope = scopeFactory.CreateScope();
@@ -50,6 +51,7 @@ public class RunRadialAnalysisHandler(
                     $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
             }
 
+            var startDate = DateTime.UtcNow;
             try
             {
                 result = await jobService.StartJobAsync(new JobModels.StartJobQuery(operationGuid.ToString()));
@@ -81,12 +83,17 @@ public class RunRadialAnalysisHandler(
                 var objectId = Guid.NewGuid();
                 await radialAnalysisObjectStorage.Save(analysis, objectId);
 
+                var endDate = DateTime.UtcNow;
                 await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
                 {
                     Id = operationGuid,
                     NanosystemId = nanosystem.Id,
+                    ObjectId = objectId,
                     LayerCount = request.LayerCount,
                     PointCount = request.PointCount,
+                    InputDate = inputDate,
+                    StartDate = startDate,
+                    EndDate = endDate,
                 });
                 
                 await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
@@ -94,6 +101,19 @@ public class RunRadialAnalysisHandler(
             }
             catch (Exception e)
             {
+                var endDate = DateTime.UtcNow;
+                await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
+                {
+                    Id = operationGuid,
+                    NanosystemId = nanosystem.Id,
+                    ObjectId = Guid.Empty, // Will be set if analysis was successful
+                    LayerCount = request.LayerCount,
+                    PointCount = request.PointCount,
+                    InputDate = inputDate,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                });
+                
                 await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
                     e.Message, true));
             }

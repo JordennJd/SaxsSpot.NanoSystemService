@@ -19,4 +19,13 @@ public class RadialAnalysis
     
     [Column("point_count")]
     public int PointCount { get; set; }
+    
+    [Column("input_date")]
+    public DateTime InputDate { get; set; }
+    
+    [Column("start_date")]
+    public DateTime StartDate { get; set; }
+    
+    [Column("end_date")]
+    public DateTime EndDate { get; set; }
 }
