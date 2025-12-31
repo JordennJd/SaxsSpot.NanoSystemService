@@ -19,7 +19,14 @@ public class CancelOperationHandler(
         var isOperationRegistered = cancellationService.IsOperationRegistered(request.OperationId);
         var localCancellationSucceeded = false;
         string? errorMessage = null;
-
+        
+        if (!string.IsNullOrEmpty(request.OperationType) && !OperationType.IsSupported(request.OperationType))
+        {
+            errorMessage = $"Operation type '{request.OperationType}' is not supported for cancellation";
+            logger.LogWarning("Operation type {OperationType} is not supported for cancellation", request.OperationType);
+            return FluentResults.Result.Fail(errorMessage);
+        }
+        
         try
         {
             logger.LogInformation("Attempting to cancel operation {OperationId}", request.OperationId);
@@ -30,23 +37,6 @@ public class CancelOperationHandler(
             }
             else
             {
-                string? operationType = null;
-                if (cancellationService.TryGetOperationType(request.OperationId, out var storedType))
-                {
-                    operationType = storedType;
-                }
-                else if (!string.IsNullOrEmpty(request.OperationType))
-                {
-                    operationType = request.OperationType;
-                }
-
-                if (!string.IsNullOrEmpty(operationType) && !OperationType.IsSupported(operationType))
-                {
-                    errorMessage = $"Operation type '{operationType}' is not supported for cancellation";
-                    logger.LogWarning("Operation type {OperationType} is not supported for cancellation", operationType);
-                    return FluentResults.Result.Fail(errorMessage);
-                }
-                
                 localCancellationSucceeded = cancellationService.CancelOperation(request.OperationId);
                 if (!localCancellationSucceeded)
                 {
