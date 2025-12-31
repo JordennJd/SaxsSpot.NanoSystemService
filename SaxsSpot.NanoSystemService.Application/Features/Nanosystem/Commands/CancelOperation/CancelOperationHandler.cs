@@ -17,9 +17,26 @@ public class CancelOperationHandler(
     public async Task<Result<Unit>> Handle(CancelOperationCommand request, CancellationToken cancellationToken)
     {
         var isOperationRegistered = cancellationService.IsOperationRegistered(request.OperationId);
+        if (!isOperationRegistered)
+        {
+            logger.LogWarning("Operation {OperationId} not found in local registry, will still attempt to cancel in job service", request.OperationId);
+            try
+            {
+                var jobServiceResult = await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(
+                    request.OperationId.ToString(),
+                    "Operation cancelled by user",
+                    true));
+            }
+            catch (Exception e)
+            {
+                //ignore error
+            }
+            
+            return FluentResults.Result.Fail("Operation cancelled by user");
+        }
+        
         var localCancellationSucceeded = false;
         string? errorMessage = null;
-        
         if (!string.IsNullOrEmpty(request.OperationType) && !OperationType.IsSupported(request.OperationType))
         {
             errorMessage = $"Operation type '{request.OperationType}' is not supported for cancellation";
@@ -30,18 +47,10 @@ public class CancelOperationHandler(
         try
         {
             logger.LogInformation("Attempting to cancel operation {OperationId}", request.OperationId);
-
-            if (!isOperationRegistered)
+            localCancellationSucceeded = cancellationService.CancelOperation(request.OperationId);
+            if (!localCancellationSucceeded)
             {
-                logger.LogWarning("Operation {OperationId} not found in local registry, will still attempt to cancel in job service", request.OperationId);
-            }
-            else
-            {
-                localCancellationSucceeded = cancellationService.CancelOperation(request.OperationId);
-                if (!localCancellationSucceeded)
-                {
-                    logger.LogWarning("Failed to cancel operation {OperationId} locally", request.OperationId);
-                }
+                logger.LogWarning("Failed to cancel operation {OperationId} locally", request.OperationId);
             }
 
             try
