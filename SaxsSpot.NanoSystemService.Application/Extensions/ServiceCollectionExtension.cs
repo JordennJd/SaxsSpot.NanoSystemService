@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Behaviors;
+using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Contracts.Services;
 
 namespace SaxsSpot.NanoSystemService.Application.Extensions;
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtension
         var domain = AppDomain.CurrentDomain.GetAssemblies();
         
         return services
+            .AddSingleton<IOperationCancellationService, OperationCancellationService>()
             .AddScoped<INanoSystemService, Services.NanoSystemService>()
             .AddLogging(cfg => cfg.AddConsole())
             .AddMediatR(cfg =>

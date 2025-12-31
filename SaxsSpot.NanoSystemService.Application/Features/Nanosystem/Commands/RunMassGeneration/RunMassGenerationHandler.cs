@@ -4,18 +4,17 @@ using Grpc.Core;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Contracts.Services;
 using SaxsSpot.Shared.ProgressTrackerClient.Contracts.Services;
 using JobModels = SaxsSpot.Shared.ProgressTrackerClient.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 
-/// <summary>
-/// Run single series nanosystem generation
-/// </summary>
-/// <param name="scopeFactory"></param>
-/// <param name="logger"></param>
-public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger<RunMassGenerationHandler> logger) : IRequestHandler<RunMassGenerationCommand, Result<Guid>>
+public class RunMassGenerationHandler(
+    IServiceScopeFactory scopeFactory, 
+    ILogger<RunMassGenerationHandler> logger,
+    IOperationCancellationService cancellationService) : IRequestHandler<RunMassGenerationCommand, Result<Guid>>
 {
     private readonly string jobType = "manual-series-run";
     private readonly string message = "Nanosystem series generation";
@@ -29,6 +28,7 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
             logger.Log(LogLevel.Information, $"Run generation started with operation id: {operationGuid}");
             
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cancellationService.RegisterOperation(operationGuid, cancellationTokenSource, jobType);
             
             _ = Task.Run(async () =>
             {
@@ -99,15 +99,17 @@ public class RunMassGenerationHandler(IServiceScopeFactory scopeFactory, ILogger
                 {
                     logger.LogCritical("Remote service is not working with error on remote server: " + ex.Message);
                     throw;
-
                 }
                 catch (InvalidOperationException ex)
                 { 
-                    logger.LogError(
-                        ex.Message);
+                    logger.LogError(ex.Message);
                     _ = await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(
                         operationGuid.ToString(), ex.Message, true));
                     throw;
+                }
+                finally
+                {
+                    cancellationService.RemoveOperation(operationGuid);
                 }
             }, cancellationTokenSource.Token);
             

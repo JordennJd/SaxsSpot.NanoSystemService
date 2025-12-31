@@ -1,6 +1,7 @@
 using Gridify;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.CancelOperation;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
@@ -31,6 +32,19 @@ public class NanosystemController(IMediator mediator) : Controller
         var result = await mediator.Send(new RunMassGenerationCommand(dto));
         return Ok(result.ToResultDto());
     }
+    
+    [HttpPost("cancel-operation")]
+    public async Task<IActionResult> CancelOperation([FromBody] CancelOperationRequest request)
+    {
+        var result = await mediator.Send(new CancelOperationCommand(request.OperationId, request.OperationType));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+        return Ok(result.ToResultDto());
+    }
+    
+    public record CancelOperationRequest(Guid OperationId, string? OperationType = null);
 
 
     [HttpGet("get")]
