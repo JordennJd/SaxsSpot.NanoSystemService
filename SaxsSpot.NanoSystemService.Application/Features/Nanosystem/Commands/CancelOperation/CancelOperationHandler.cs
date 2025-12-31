@@ -73,12 +73,12 @@ public class CancelOperationHandler(
             cancellationService.RemoveOperation(request.OperationId);
             logger.LogInformation("Operation {OperationId} cancelled successfully", request.OperationId);
 
-            return Result.Ok();
+            return FluentResults.Result.Ok();
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error cancelling operation {OperationId}", request.OperationId);
-            return Result.Fail($"Failed to cancel operation: {ex.Message}");
+            return FluentResults.Result.Fail($"Failed to cancel operation: {ex.Message}");
         }
     }
 }
