@@ -12,9 +12,9 @@ public class CancelOperationHandler(
     IJobServiceClient jobService,
     ILogger<CancelOperationHandler> logger,
     IOperationCancellationService cancellationService) 
-    : IRequestHandler<CancelOperationCommand, FluentResults.Result>
+    : IRequestHandler<CancelOperationCommand, Result<Unit>>
 {
-    public async Task<FluentResults.Result> Handle(CancelOperationCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(CancelOperationCommand request, CancellationToken cancellationToken)
     {
         try
         {
