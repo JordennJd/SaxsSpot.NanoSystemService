@@ -23,7 +23,7 @@ public class CancelOperationHandler(
             if (!cancellationService.IsOperationRegistered(request.OperationId))
             {
                 logger.LogWarning("Operation {OperationId} not found or already completed", request.OperationId);
-                return Result.Fail($"Operation {request.OperationId} not found or already completed");
+                return FluentResults.Result.Fail($"Operation {request.OperationId} not found or already completed");
             }
 
             string? operationType = null;
@@ -39,13 +39,13 @@ public class CancelOperationHandler(
             if (!string.IsNullOrEmpty(operationType) && !OperationType.IsSupported(operationType))
             {
                 logger.LogWarning("Operation type {OperationType} is not supported for cancellation", operationType);
-                return Result.Fail($"Operation type '{operationType}' is not supported for cancellation");
+                return FluentResults.Result.Fail($"Operation type '{operationType}' is not supported for cancellation");
             }
 
             if (!cancellationService.CancelOperation(request.OperationId))
             {
                 logger.LogWarning("Failed to cancel operation {OperationId}", request.OperationId);
-                return Result.Fail($"Failed to cancel operation {request.OperationId}");
+                return FluentResults.Result.Fail($"Failed to cancel operation {request.OperationId}");
             }
 
             try
