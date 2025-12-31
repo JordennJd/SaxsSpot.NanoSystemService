@@ -44,14 +44,13 @@ public class CancelOperationHandler(
                 {
                     errorMessage = $"Operation type '{operationType}' is not supported for cancellation";
                     logger.LogWarning("Operation type {OperationType} is not supported for cancellation", operationType);
+                    return FluentResults.Result.Fail(errorMessage);
                 }
-                else
+                
+                localCancellationSucceeded = cancellationService.CancelOperation(request.OperationId);
+                if (!localCancellationSucceeded)
                 {
-                    localCancellationSucceeded = cancellationService.CancelOperation(request.OperationId);
-                    if (!localCancellationSucceeded)
-                    {
-                        logger.LogWarning("Failed to cancel operation {OperationId} locally", request.OperationId);
-                    }
+                    logger.LogWarning("Failed to cancel operation {OperationId} locally", request.OperationId);
                 }
             }
 
