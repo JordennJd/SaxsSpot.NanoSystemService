@@ -1,7 +1,7 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
+using SaxsSpot.NanoSystemService.Contracts.Messages;
 using SaxsSpot.NanoSystemService.Kafka.Consumers;
 
 namespace SaxsSpot.NanoSystemService.Kafka.Extensions;
@@ -32,7 +32,7 @@ public static class ServiceCollectionExtension
                     
                     k.Host(brokers);
                     
-                    k.TopicEndpoint<RunGenerationCommand>(
+                    k.TopicEndpoint<RunGenerationRequest>(
                         topic,
                         group,
                         e =>

@@ -2,37 +2,44 @@ using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
-using SaxsSpot.Shared.ProgressTrackerClient.Contracts.Services;
+using SaxsSpot.NanoSystemService.Contracts.Messages;
 
 namespace SaxsSpot.NanoSystemService.Kafka.Consumers;
 
 public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationConsumer> logger)
-    : IConsumer<RunGenerationCommand>
+    : IConsumer<RunGenerationRequest>
 {
-    public async Task Consume(ConsumeContext<RunGenerationCommand> context)
+    public async Task Consume(ConsumeContext<RunGenerationRequest> context)
     {
-        var command = context.Message;
+        var request = context.Message;
         
-        logger.LogInformation("Received RunGenerationCommand from Kafka. Parameters: Count={Count}, NC={Nc}, Excess={Excess}",
-            command.Parameters.Count, command.Parameters.NumericalConcentration, command.Parameters.Excess);
+        logger.LogInformation("Received RunGenerationRequest from Kafka. OperationId={OperationId}, SeriesId={SeriesId}, Parameters: Count={Count}, NC={Nc}, Excess={Excess}",
+            request.OperationId, request.SeriesId, request.Parameters.Count, request.Parameters.NumericalConcentration, request.Parameters.Excess);
 
         try
         {
+            // Map RunGenerationRequest to RunGenerationCommand
+            var command = new RunGenerationCommand(
+                request.Parameters,
+                request.OperationId,
+                request.SeriesId);
+            
             var result = await mediator.Send(command, context.CancellationToken);
             
             if (result.IsSuccess)
             {
-                logger.LogInformation("RunGenerationCommand processed successfully. OperationId: {OperationId}", command.OperationId);
+                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}", 
+                    request.OperationId, request.SeriesId);
             }
             else
             {
-                logger.LogError("RunGenerationCommand processing failed. Errors: {Errors}", 
+                logger.LogError("RunGenerationRequest processing failed. Errors: {Errors}", 
                     string.Join(", ", result.Errors.Select(e => e.Message)));
             }
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing RunGenerationCommand");
+            logger.LogError(ex, "Error processing RunGenerationRequest");
             throw;
         }
     }
