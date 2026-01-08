@@ -20,13 +20,6 @@ namespace SaxsSpot.NanoSystemService.Host.Controllers;
 [Route("api/nanosystem")]
 public class NanosystemController(IMediator mediator) : Controller
 {
-    [HttpPost("run-generation")]
-    public async Task<IActionResult> RunGeneration([FromBody] CommonParticleGenerationParameters dto)
-    {
-        var result = await mediator.Send(new RunGenerationCommand(dto));
-        return Ok(result.ToResultDto());
-    }
-    
     [HttpPost("run-mass-generation")]
     public async Task<IActionResult> RunMassGeneration([FromBody] MassGenerateNanoSystemOptions dto)
     {
