@@ -37,6 +37,13 @@ public static class ServiceCollectionExtension
                         group,
                         e =>
                         {
+                            // Create topic if it doesn't exist with default settings
+                            e.CreateIfMissing(t =>
+                            {
+                                t.NumPartitions = 1;
+                                t.ReplicationFactor = 1;
+                            });
+                            
                             e.ConfigureConsumer<RunGenerationConsumer>(context, c =>
                             {
                                 c.ConcurrentMessageLimit = 1;
