@@ -1,4 +1,5 @@
 using AutoMapper;
+using SaxsSpot.NanoSystemGeneration.Contracts.Models;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
@@ -14,6 +15,8 @@ public class NanoSystemService(
     INanoSystemObjectStorage objectStorage,
     INanoSystemStorage storage,
     INanoSystemSeriesStorage seriesStorage,
+    IRadialAnalysisObjectStorage radialAnalysisObjectStorage,
+    IRadialAnalysisStorage radialAnalysisStorage,
     IMapper mapper)
     : INanoSystemService
 {
@@ -72,7 +75,7 @@ public class NanoSystemService(
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
-        CancellationToken cancellationToken = default, Guid seriesId = default)
+        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000)
     {
         var systemObjectGuid = Guid.NewGuid();
         
@@ -87,15 +90,38 @@ public class NanoSystemService(
         }
         
         var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
+
+        var analysisStartDate = DateTime.Now;
+        var analysis = NanosystemAnalyzer.GetNanosystemAnalyze(distributeParticles
+            .Select(x => x).ToList(), await generator.GetGenerationZone(), analysisZoneCount, analysisVectorCount);
+        var analysisEndDate = DateTime.Now;
+
+        var avgByFiveZone = analysis.Take(5).Average(x => x.Concentration);
         
         var generationZone = await generator.GetGenerationZone();
         var generationEndDate = DateTime.Now.ToUniversalTime();
-
+        
+        var radialAnalysisObjectId = Guid.NewGuid();
+        var nanosystemId = Guid.NewGuid();
+        await radialAnalysisObjectStorage.Save(analysis, radialAnalysisObjectId);
+        await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
+        {
+            Id = Guid.NewGuid(),
+            NanosystemId = nanosystemId,
+            ObjectId = radialAnalysisObjectId,
+            LayerCount = analysisZoneCount,
+            PointCount = analysisVectorCount,
+            InputDate = DateTime.Now,
+            StartDate = analysisStartDate,
+            EndDate = analysisEndDate,
+        });
+        
         var entity = new Nanosystem
         {
+            Id = nanosystemId,
             ParticleKind = options.GetParticleKind(),
             ParticleCount = distributeParticles.Count,
-            NumericalConcentration = distributeParticles.Sum(x => x.GetVolume()) / generationZone.GetVolume(),
+            NumericalConcentration = avgByFiveZone,
             GlobalSize = generationZone.GlobalSize,
             GenerationZoneForm = generationZone.GenerationZoneForm,
             GenerationZoneVolume = generationZone.GetVolume(),
