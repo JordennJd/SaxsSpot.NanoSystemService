@@ -140,5 +140,47 @@ public class NanoSystemService(
         
         await storage.UpdateOrInsertAsync(entity);
         await objectStorage.Save(distributeParticles, systemObjectGuid);
+        
+        // Create or update nanosystem series if seriesId is provided
+        if (seriesId != default)
+        {
+            var existingSeriesList = (await seriesStorage.WhereAsync(x => x.Id == seriesId)).ToList();
+            var existingSeries = existingSeriesList.FirstOrDefault();
+            
+            if (existingSeries == null)
+            {
+                // Create new series with initial parameters from current generation
+                var newSeries = new NanosystemSeries
+                {
+                    Id = seriesId,
+                    ParticleKind = options.GetParticleKind(),
+                    ExcessFrom = options.Excess,
+                    ExcessTo = options.Excess,
+                    KFrom = options.K,
+                    KTo = options.K,
+                    ThetaFrom = options.Theta,
+                    ThetaTo = options.Theta,
+                };
+                await seriesStorage.UpdateOrInsertAsync(newSeries);
+                existingSeries = newSeries;
+            }
+            
+            // Update series with actual parameters from all generated systems
+            var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == seriesId)).ToList();
+            if (generatedSystems.Any())
+            {
+                existingSeries.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
+                existingSeries.MinParticleSizeTo = generatedSystems.Max(x => x.MinParticleSize);
+                existingSeries.MaxParticleSizeFrom = generatedSystems.Min(x => x.MaxParticleSize);
+                existingSeries.MaxParticleSizeTo = generatedSystems.Max(x => x.MaxParticleSize);
+                existingSeries.GlobalSizeFrom = generatedSystems.Min(x => x.GlobalSize);
+                existingSeries.GlobalSizeTo = generatedSystems.Max(x => x.GlobalSize);
+                existingSeries.ParticleCountFrom = generatedSystems.Min(x => x.ParticleCount);
+                existingSeries.ParticleCountTo = generatedSystems.Max(x => x.ParticleCount);
+                existingSeries.NumericalConcentrationFrom = generatedSystems.Min(x => x.NumericalConcentration);
+                existingSeries.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
+                await seriesStorage.UpdateOrInsertAsync(existingSeries);
+            }
+        }
     }
 }
