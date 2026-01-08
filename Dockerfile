@@ -19,6 +19,7 @@ COPY ["SaxsSpot.NanoSystemService.Application/SaxsSpot.NanoSystemService.Applica
 COPY ["SaxsSpot.NanoSystemService.Contracts/SaxsSpot.NanoSystemService.Contracts.csproj", "SaxsSpot.NanoSystemService.Contracts/"]
 COPY ["SaxsSpot.NanoSystemService.Domain/SaxsSpot.NanoSystemService.Domain.csproj", "SaxsSpot.NanoSystemService.Domain/"]
 COPY ["SaxsSpot.NanoSystemService.Storage/SaxsSpot.NanoSystemService.Storage.csproj", "SaxsSpot.NanoSystemService.Storage/"]
+COPY ["SaxsSpot.NanoSystemService.Kafka/SaxsSpot.NanoSystemService.Kafka.csproj", "SaxsSpot.NanoSystemService.Kafka/"]
 RUN dotnet nuget add source https://local.devspot.tech/git/api/packages/SaxsSpot/nuget/index.json --name saxscalc
 
 RUN dotnet restore "SaxsSpot.NanoSystemService.Host/SaxsSpot.NanoSystemService.Host.csproj"
