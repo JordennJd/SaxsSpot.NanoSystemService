@@ -45,8 +45,8 @@ public class RunGenerationHandler(
             EventHandler<float>? progressHandler = (sender, progress) =>
             {
                 // Update only every 0.5% (0.005)
-                var currentProgressPercent = progress * 100;
-                var progressDiff = Math.Abs(currentProgressPercent - (lastReportedProgress * 100));
+                var currentProgressPercent = progress;
+                var progressDiff = Math.Abs(currentProgressPercent - (lastReportedProgress));
                 
                 if (progressDiff >= 0.5f || lastReportedProgress < 0)
                 {

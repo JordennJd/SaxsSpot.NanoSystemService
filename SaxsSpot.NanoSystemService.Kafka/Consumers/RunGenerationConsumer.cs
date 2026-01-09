@@ -14,8 +14,27 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
     {
         var request = context.Message;
         
-        logger.LogInformation("Received RunGenerationRequest from Kafka. OperationId={OperationId}, SeriesId={SeriesId}, Parameters: Count={Count}, NC={Nc}, Excess={Excess}, ZoneCount={ZoneCount}, PointCount={PointCount}, NeedAnalysis={NeedAnalysis}",
-            request.OperationId, request.SeriesId, request.Parameters.Count, request.Parameters.NumericalConcentration, request.Parameters.Excess,
+        // Log partition and offset for debugging duplicate processing
+        var partition = context.GetHeader<int>("kafka-partition", -1);
+        var offset = context.GetHeader<long>("kafka-offset", -1);
+        
+        // Alternative: try to get from Kafka-specific headers
+        if (partition == -1)
+        {
+            context.Headers.TryGetHeader("kafka_partition", out var partHeader);
+            if (partHeader != null && int.TryParse(partHeader.ToString(), out var part))
+                partition = part;
+        }
+        
+        if (offset == -1)
+        {
+            context.Headers.TryGetHeader("kafka_offset", out var offHeader);
+            if (offHeader != null && long.TryParse(offHeader.ToString(), out var off))
+                offset = off;
+        }
+        
+        logger.LogInformation("Received RunGenerationRequest from Kafka. OperationId={OperationId}, SeriesId={SeriesId}, Partition={Partition}, Offset={Offset}, Parameters: Count={Count}, NC={Nc}, Excess={Excess}, ZoneCount={ZoneCount}, PointCount={PointCount}, NeedAnalysis={NeedAnalysis}",
+            request.OperationId, request.SeriesId, partition, offset, request.Parameters.Count, request.Parameters.NumericalConcentration, request.Parameters.Excess,
             request.ZoneCount, request.Parameters.PointCount, request.NeedAnalysis);
 
         try
@@ -45,10 +64,12 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
             
             if (result.IsSuccess)
             {
-                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}. Offset will be committed.", 
-                    request.OperationId, request.SeriesId);
+                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}, Partition={Partition}, Offset={Offset}. Offset will be committed automatically.", 
+                    request.OperationId, request.SeriesId, partition, offset);
+                
                 // Method completes successfully - MassTransit will automatically commit the offset
                 // No exception thrown = offset committed = message marked as processed
+                // This prevents other instances from processing the same message
                 return;
             }
             else
