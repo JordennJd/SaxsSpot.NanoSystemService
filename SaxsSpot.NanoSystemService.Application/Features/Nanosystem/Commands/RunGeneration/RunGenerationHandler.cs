@@ -39,13 +39,85 @@ public class RunGenerationHandler(
             var analysisZoneCount = shouldPerformAnalysis ? request.ZoneCount : 0;
             var analysisVectorCount = shouldPerformAnalysis ? request.PointCount : 0;
             
+            // Create progress handler to update job with generation progress
+            // Track last reported progress to update only every 0.5%
+            var lastReportedProgress = -1.0f;
+            EventHandler<float>? progressHandler = (sender, progress) =>
+            {
+                // Update only every 0.5% (0.005)
+                var currentProgressPercent = progress * 100;
+                var progressDiff = Math.Abs(currentProgressPercent - (lastReportedProgress * 100));
+                
+                if (progressDiff >= 0.5f || lastReportedProgress < 0)
+                {
+                    lastReportedProgress = progress;
+                    var progressPercent = (int)Math.Round(currentProgressPercent);
+                    
+                    try
+                    {
+                        // Use Task.Run to avoid blocking the progress callback
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                                    operationGuid.ToString(),
+                                    $"Generation in progress: {progressPercent}%"));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogWarning(ex, "Failed to update job progress for operation {OperationId}", operationGuid);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to schedule job progress update for operation {OperationId}", operationGuid);
+                    }
+                }
+            };
+            
+            // Create callback for when analysis starts
+            Func<Task>? onAnalysisStarted = null;
+            if (shouldPerformAnalysis)
+            {
+                onAnalysisStarted = async () =>
+                {
+                    try
+                    {
+                        await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                            operationGuid.ToString(),
+                            "Analysis started"));
+                        logger.LogInformation("Analysis started notification sent for operation {OperationId}", operationGuid);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to notify analysis start for operation {OperationId}", operationGuid);
+                    }
+                };
+            }
+            
             switch (request.Parameters.GetParticleKind())
             {
                 case ParticleKind.Parallelepiped:
-                    await nanoSystemService.RunGeneration(mapper.Map<ParallelepipedGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken, analysisZoneCount: analysisZoneCount, analysisVectorCount: analysisVectorCount);
+                    await nanoSystemService.RunGeneration(
+                        mapper.Map<ParallelepipedGenerationParameters>(request.Parameters), 
+                        progressHandler: progressHandler,
+                        seriesId: request.SeriesId, 
+                        cancellationToken: cancellationToken, 
+                        analysisZoneCount: analysisZoneCount, 
+                        analysisVectorCount: analysisVectorCount,
+                        onAnalysisStarted: onAnalysisStarted);
                     break;
                 case ParticleKind.Sphere:
-                    await nanoSystemService.RunGeneration(mapper.Map<SphereGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken, analysisZoneCount: analysisZoneCount, analysisVectorCount: analysisVectorCount);
+                    await nanoSystemService.RunGeneration(
+                        mapper.Map<SphereGenerationParameters>(request.Parameters), 
+                        progressHandler: progressHandler,
+                        seriesId: request.SeriesId, 
+                        cancellationToken: cancellationToken, 
+                        analysisZoneCount: analysisZoneCount, 
+                        analysisVectorCount: analysisVectorCount,
+                        onAnalysisStarted: onAnalysisStarted);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

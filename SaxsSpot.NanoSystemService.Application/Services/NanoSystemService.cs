@@ -75,7 +75,7 @@ public class NanoSystemService(
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
-        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000)
+        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null)
     {
         var systemObjectGuid = Guid.NewGuid();
         
@@ -100,6 +100,12 @@ public class NanoSystemService(
         // Perform analysis only if zoneCount and pointCount are greater than 0
         if (analysisZoneCount > 0 && analysisVectorCount > 0)
         {
+            // Notify that analysis is starting
+            if (onAnalysisStarted != null)
+            {
+                await onAnalysisStarted();
+            }
+            
             var analysisStartDate = DateTime.Now;
             var analysis = NanosystemAnalyzer.GetNanosystemAnalyze(distributeParticles
                 .Select(x => x).ToList(), generationZone, analysisZoneCount, analysisVectorCount);
