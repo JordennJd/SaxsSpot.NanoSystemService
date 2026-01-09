@@ -5,5 +5,5 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get
 
 public record IndexRange(int FromIndex, int ToIndex);
 
-public record GetGenerationMetricsQuery(Guid NanosystemId, IList<IndexRange>? IndexRanges = null) 
+public record GetGenerationMetricsQuery(Guid NanosystemId, IList<IndexRange>? ParticleIndexRanges = null) 
     : IRequest<Result<IEnumerable<GenerationMetricsDto>>>;
