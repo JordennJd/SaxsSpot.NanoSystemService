@@ -46,4 +46,8 @@ public class GetNanosystemGenerationOptionsQuery : IRequest<Result<MassGenerateN
     public float ThetaFrom { get; set; }
 
     public float ThetaTo { get; set; }
+    
+    public int? PointCountFrom { get; set; }
+    
+    public int? PointCountTo { get; set; }
 }

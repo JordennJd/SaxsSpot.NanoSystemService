@@ -32,14 +32,20 @@ public class RunGenerationHandler(
                 throw new InvalidOperationException(startResult.ErrorMessage);
             }
 
-            logger.Log(LogLevel.Information, $"Run generation started with operation id: {operationGuid}, series id: {request.SeriesId}");
+            logger.Log(LogLevel.Information, $"Run generation started with operation id: {operationGuid}, series id: {request.SeriesId}, zoneCount: {request.ZoneCount}, pointCount: {request.PointCount}, needAnalysis: {request.NeedAnalysis}");
+            
+            // Determine if analysis should be performed: needAnalysis must be true AND pointCount must be > 0
+            var shouldPerformAnalysis = request.NeedAnalysis && request.PointCount > 0;
+            var analysisZoneCount = shouldPerformAnalysis ? request.ZoneCount : 0;
+            var analysisVectorCount = shouldPerformAnalysis ? request.PointCount : 0;
+            
             switch (request.Parameters.GetParticleKind())
             {
                 case ParticleKind.Parallelepiped:
-                    await nanoSystemService.RunGeneration(mapper.Map<ParallelepipedGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken);
+                    await nanoSystemService.RunGeneration(mapper.Map<ParallelepipedGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken, analysisZoneCount: analysisZoneCount, analysisVectorCount: analysisVectorCount);
                     break;
                 case ParticleKind.Sphere:
-                    await nanoSystemService.RunGeneration(mapper.Map<SphereGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken);
+                    await nanoSystemService.RunGeneration(mapper.Map<SphereGenerationParameters>(request.Parameters), seriesId: request.SeriesId, cancellationToken: cancellationToken, analysisZoneCount: analysisZoneCount, analysisVectorCount: analysisVectorCount);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

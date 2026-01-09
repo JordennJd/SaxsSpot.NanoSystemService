@@ -91,30 +91,41 @@ public class NanoSystemService(
         
         var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
 
-        var analysisStartDate = DateTime.Now;
-        var analysis = NanosystemAnalyzer.GetNanosystemAnalyze(distributeParticles
-            .Select(x => x).ToList(), await generator.GetGenerationZone(), analysisZoneCount, analysisVectorCount);
-        var analysisEndDate = DateTime.Now;
-
-        var avgByFiveZone = analysis.Take(5).Average(x => x.Concentration);
-        
         var generationZone = await generator.GetGenerationZone();
         var generationEndDate = DateTime.Now.ToUniversalTime();
-        
-        var radialAnalysisObjectId = Guid.NewGuid();
         var nanosystemId = Guid.NewGuid();
-        await radialAnalysisObjectStorage.Save(analysis, radialAnalysisObjectId);
-        await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
+        
+        double avgByFiveZone = 0;
+        
+        // Perform analysis only if zoneCount and pointCount are greater than 0
+        if (analysisZoneCount > 0 && analysisVectorCount > 0)
         {
-            Id = Guid.NewGuid(),
-            NanosystemId = nanosystemId,
-            ObjectId = radialAnalysisObjectId,
-            LayerCount = analysisZoneCount,
-            PointCount = analysisVectorCount,
-            InputDate = DateTime.Now.ToUniversalTime(),
-            StartDate = analysisStartDate.ToUniversalTime(),
-            EndDate = analysisEndDate.ToUniversalTime(),
-        });
+            var analysisStartDate = DateTime.Now;
+            var analysis = NanosystemAnalyzer.GetNanosystemAnalyze(distributeParticles
+                .Select(x => x).ToList(), generationZone, analysisZoneCount, analysisVectorCount);
+            var analysisEndDate = DateTime.Now;
+
+            avgByFiveZone = analysis.Take(5).Average(x => x.Concentration);
+            
+            var radialAnalysisObjectId = Guid.NewGuid();
+            await radialAnalysisObjectStorage.Save(analysis, radialAnalysisObjectId);
+            await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
+            {
+                Id = Guid.NewGuid(),
+                NanosystemId = nanosystemId,
+                ObjectId = radialAnalysisObjectId,
+                LayerCount = analysisZoneCount,
+                PointCount = analysisVectorCount,
+                InputDate = DateTime.Now.ToUniversalTime(),
+                StartDate = analysisStartDate.ToUniversalTime(),
+                EndDate = analysisEndDate.ToUniversalTime(),
+            });
+        }
+        else
+        {
+            // Use numerical concentration from parameters if analysis is not performed
+            avgByFiveZone = options.NumericalConcentration ?? 0;
+        }
         
         var entity = new Nanosystem
         {
@@ -178,6 +189,8 @@ public class NanoSystemService(
                 existingSeries.ParticleCountFrom = generatedSystems.Min(x => x.ParticleCount);
                 existingSeries.ParticleCountTo = generatedSystems.Max(x => x.ParticleCount);
                 existingSeries.NumericalConcentrationFrom = generatedSystems.Min(x => x.NumericalConcentration);
+                existingSeries.ExcessFrom = generatedSystems.Min(x => x.Excess);
+                existingSeries.ExcessTo = generatedSystems.Max(x => x.Excess);
                 existingSeries.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
                 await seriesStorage.UpdateOrInsertAsync(existingSeries);
             }
