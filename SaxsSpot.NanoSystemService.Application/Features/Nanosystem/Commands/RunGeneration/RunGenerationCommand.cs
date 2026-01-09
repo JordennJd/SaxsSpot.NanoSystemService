@@ -10,4 +10,5 @@ public record RunGenerationCommand(
     Guid SeriesId = default,
     int ZoneCount = 20,
     int PointCount = 5_000_000,
-    bool NeedAnalysis = true) : IRequest<Result<Guid>>;
+    bool NeedAnalysis = true,
+    bool NeedMetrics = false) : IRequest<Result<Guid>>;

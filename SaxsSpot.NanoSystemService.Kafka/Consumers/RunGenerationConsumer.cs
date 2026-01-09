@@ -58,7 +58,8 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
                 request.SeriesId,
                 request.ZoneCount ?? 20,
                 request.Parameters.PointCount ?? 0, // 0 means no analysis
-                request.NeedAnalysis ?? true);
+                request.NeedAnalysis ?? true,
+                request.NeedMetrics ?? false);
             
             var result = await mediator.Send(command, context.CancellationToken);
             
@@ -84,8 +85,7 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
         catch (OperationCanceledException)
         {
             logger.LogWarning("RunGenerationRequest processing was canceled. OperationId: {OperationId}", request.OperationId);
-            // Re-throw cancellation to prevent offset commit
-            throw;
+            return;
         }
         catch (Exception ex)
         {

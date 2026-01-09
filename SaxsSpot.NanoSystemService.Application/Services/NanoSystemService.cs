@@ -17,6 +17,8 @@ public class NanoSystemService(
     INanoSystemSeriesStorage seriesStorage,
     IRadialAnalysisObjectStorage radialAnalysisObjectStorage,
     IRadialAnalysisStorage radialAnalysisStorage,
+    IGenerationMetricsStorage generationMetricsStorage,
+    IParticleGenerationMetricsStorage particleGenerationMetricsStorage,
     IMapper mapper)
     : INanoSystemService
 {
@@ -75,7 +77,7 @@ public class NanoSystemService(
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
-        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null)
+        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null, bool needMetrics = false)
     {
         var systemObjectGuid = Guid.NewGuid();
         
@@ -90,7 +92,6 @@ public class NanoSystemService(
         }
         
         var distributeParticles = await generator.DistributeParticles(progress, cancellationToken);
-
         var generationZone = await generator.GetGenerationZone();
         var generationEndDate = DateTime.Now.ToUniversalTime();
         var nanosystemId = Guid.NewGuid();
@@ -157,7 +158,42 @@ public class NanoSystemService(
         await storage.UpdateOrInsertAsync(entity);
         await objectStorage.Save(distributeParticles, systemObjectGuid);
         
-        // Create or update nanosystem series if seriesId is provided
+        // Save particle generation metrics if needed
+        if (needMetrics && generator.GenerationInfo != null)
+        {
+            var particleInfos = generator.GenerationInfo.GetParticleInfos();
+            var particleMetrics = particleInfos.Select(particleInfo => new ParticleGenerationMetrics
+            {
+                Id = Guid.NewGuid(),
+                NanosystemId = nanosystemId,
+                ParticleIndex = particleInfo.ParticleIndex,
+                TotalAttempts = particleInfo.TotalAttempts,
+                PositiveAttempts = particleInfo.PositiveAttempts,
+                TotalChangePositionAttempts = particleInfo.TotalChangePositionAttempts,
+                GenerationTimeMs = (long)particleInfo.GenerationTime.TotalMilliseconds,
+                Volume = particleInfo.Volume,
+                Diameter = particleInfo.Diameter,
+                ParticlesCheckedForIntersection = particleInfo.ParticlesCheckedForIntersection,
+                OutOfZoneAttempts = particleInfo.OutOfZoneAttempts,
+                FirstNodeIntersectionFindTimes = particleInfo.FirstNodeIntersectionFindTimes,
+                TotalNeighborsNodesCheckedCount = particleInfo.TotalNeighborsNodesCheckedCount,
+                IsInterCenterDistanceMoreThenDiagonalCheckTimesPositive = particleInfo.IsInterCenterDistanceMoreThenDiagonalCheckTimesPositive,
+                IsInterCenterDistanceMoreThenDiagonalCheckTimesTotal = particleInfo.IsInterCenterDistanceMoreThenDiagonalCheckTimesTotal,
+                IsInterCenterDistanceLessThenSidesCheckTimesPositive = particleInfo.IsInterCenterDistanceLessThenSidesCheckTimesPositive,
+                IsInterCenterDistanceLessThenSidesCheckTimesTotal = particleInfo.IsInterCenterDistanceLessThenSidesCheckTimesTotal,
+                ElementaryIntersectCheckOnlyBordersNewTransformationTimesPositive = particleInfo.ElementaryIntersectCheckOnlyBordersNewTransformationTimesPositive,
+                ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal = particleInfo.ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal,
+                ElementaryIntersectCheckOnlyBordersOldTransformationTimesPositive = particleInfo.ElementaryIntersectCheckOnlyBordersOldTransformationTimesPositive,
+                ElementaryIntersectCheckOnlyBordersOldTransformationTimesTotal = particleInfo.ElementaryIntersectCheckOnlyBordersOldTransformationTimesTotal,
+                BackRotateMatrixReused = particleInfo.BackRotateMatrixReused,
+                SATCheckTimesPositive = particleInfo.SATCheckTimesPositive,
+                SATCheckTimesTotal = particleInfo.SATCheckTimesTotal,
+                InputDate = DateTime.Now.ToUniversalTime()
+            }).ToList();
+            
+            await particleGenerationMetricsStorage.UpdateOrInsertAsync(particleMetrics);
+        }
+        
         if (seriesId != default)
         {
             var existingSeriesList = (await seriesStorage.WhereAsync(x => x.Id == seriesId)).ToList();
@@ -181,7 +217,6 @@ public class NanoSystemService(
                 existingSeries = newSeries;
             }
             
-            // Update series with actual parameters from all generated systems
             var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == seriesId)).ToList();
             if (generatedSystems.Any())
             {

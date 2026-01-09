@@ -13,11 +13,15 @@ public static class DependencyInjections
         return services.AddDbContext<NanoSystemDbContext>()
                 .AddDbContext<NanoSystemSeriesDbContext>()
                 .AddDbContext<RadialAnalysisDbContext>()
+                .AddDbContext<GenerationMetricsDbContext>()
+                .AddDbContext<ParticleGenerationMetricsDbContext>()
                 .AddScoped<INanoSystemStorage, NanoSystemStorage>()
                 .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
                 .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
                 .AddScoped<IRadialAnalysisStorage, RadialAnalysisStorage>()
                 .AddScoped<IRadialAnalysisObjectStorage, RadialAnalysisObjectStorage>()
+                .AddScoped<IGenerationMetricsStorage, GenerationMetricsStorage>()
+                .AddScoped<IParticleGenerationMetricsStorage, ParticleGenerationMetricsStorage>()
             ;
     }
 }

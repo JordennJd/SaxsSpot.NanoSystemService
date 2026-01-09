@@ -107,7 +107,8 @@ public class RunGenerationHandler(
                         cancellationToken: cancellationToken, 
                         analysisZoneCount: analysisZoneCount, 
                         analysisVectorCount: analysisVectorCount,
-                        onAnalysisStarted: onAnalysisStarted);
+                        onAnalysisStarted: onAnalysisStarted,
+                        needMetrics: request.NeedMetrics);
                     break;
                 case ParticleKind.Sphere:
                     await nanoSystemService.RunGeneration(
@@ -117,7 +118,8 @@ public class RunGenerationHandler(
                         cancellationToken: cancellationToken, 
                         analysisZoneCount: analysisZoneCount, 
                         analysisVectorCount: analysisVectorCount,
-                        onAnalysisStarted: onAnalysisStarted);
+                        onAnalysisStarted: onAnalysisStarted,
+                        needMetrics: request.NeedMetrics);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
