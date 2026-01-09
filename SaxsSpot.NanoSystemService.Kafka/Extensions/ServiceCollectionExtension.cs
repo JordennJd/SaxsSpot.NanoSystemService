@@ -50,6 +50,10 @@ public static class ServiceCollectionExtension
                             });
                             
                             e.ConcurrentConsumerLimit = 1;
+                            
+                            // MassTransit Kafka automatically commits offset when Consume method completes successfully
+                            // If an exception is thrown, offset is NOT committed and message will be retried
+                            // Ensure the Consume method completes without exceptions for successful processing
                         });
                 });
             });

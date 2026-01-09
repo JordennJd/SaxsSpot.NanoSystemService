@@ -45,18 +45,31 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
             
             if (result.IsSuccess)
             {
-                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}", 
+                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}. Offset will be committed.", 
                     request.OperationId, request.SeriesId);
+                // Method completes successfully - MassTransit will automatically commit the offset
+                // No exception thrown = offset committed = message marked as processed
+                return;
             }
             else
             {
-                logger.LogError("RunGenerationRequest processing failed. Errors: {Errors}", 
-                    string.Join(", ", result.Errors.Select(e => e.Message)));
+                var errorMessage = string.Join(", ", result.Errors.Select(e => e.Message));
+                logger.LogError("RunGenerationRequest processing failed. OperationId: {OperationId}, Errors: {Errors}", 
+                    request.OperationId, errorMessage);
+                // Throw exception to prevent offset commit, allowing message to be retried
+                throw new InvalidOperationException($"RunGenerationCommand failed: {errorMessage}");
             }
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogWarning("RunGenerationRequest processing was canceled. OperationId: {OperationId}", request.OperationId);
+            // Re-throw cancellation to prevent offset commit
+            throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing RunGenerationRequest");
+            logger.LogError(ex, "Error processing RunGenerationRequest. OperationId: {OperationId}", request.OperationId);
+            // Re-throw to prevent offset commit, allowing message to be retried
             throw;
         }
     }

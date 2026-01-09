@@ -123,8 +123,7 @@ public class NanoSystemService(
         }
         else
         {
-            // Use numerical concentration from parameters if analysis is not performed
-            avgByFiveZone = options.NumericalConcentration ?? 0;
+            avgByFiveZone = distributeParticles.Sum(x => x.GetVolume())/(await generator.GetGenerationZone()).GetVolume();
         }
         
         var entity = new Nanosystem
