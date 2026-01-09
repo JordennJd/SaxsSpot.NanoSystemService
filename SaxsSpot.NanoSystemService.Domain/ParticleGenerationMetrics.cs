@@ -49,29 +49,29 @@ public class ParticleGenerationMetrics
     public int TotalNeighborsNodesCheckedCount { get; set; }
     
     // Distance check metrics
-    [Column("is_inter_center_distance_more_then_diagonal_check_times_positive")]
+    [Column("inter_center_dist_more_diag_check_pos")]
     public int IsInterCenterDistanceMoreThenDiagonalCheckTimesPositive { get; set; }
     
-    [Column("is_inter_center_distance_more_then_diagonal_check_times_total")]
+    [Column("inter_center_dist_more_diag_check_total")]
     public int IsInterCenterDistanceMoreThenDiagonalCheckTimesTotal { get; set; }
     
-    [Column("is_inter_center_distance_less_then_sides_check_times_positive")]
+    [Column("inter_center_dist_less_sides_check_pos")]
     public int IsInterCenterDistanceLessThenSidesCheckTimesPositive { get; set; }
     
-    [Column("is_inter_center_distance_less_then_sides_check_times_total")]
+    [Column("inter_center_dist_less_sides_check_total")]
     public int IsInterCenterDistanceLessThenSidesCheckTimesTotal { get; set; }
     
     // Elementary intersection check metrics
-    [Column("elementary_intersect_check_only_borders_new_transformation_times_positive")]
+    [Column("elem_intersect_borders_new_transf_times_pos")]
     public int ElementaryIntersectCheckOnlyBordersNewTransformationTimesPositive { get; set; }
     
-    [Column("elementary_intersect_check_only_borders_new_transformation_times_total")]
+    [Column("elem_intersect_borders_new_transf_times_total")]
     public int ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal { get; set; }
     
-    [Column("elementary_intersect_check_only_borders_old_transformation_times_positive")]
+    [Column("elem_intersect_borders_old_transf_times_pos")]
     public int ElementaryIntersectCheckOnlyBordersOldTransformationTimesPositive { get; set; }
     
-    [Column("elementary_intersect_check_only_borders_old_transformation_times_total")]
+    [Column("elem_intersect_borders_old_transf_times_total")]
     public int ElementaryIntersectCheckOnlyBordersOldTransformationTimesTotal { get; set; }
     
     [Column("back_rotate_matrix_reused")]
