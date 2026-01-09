@@ -111,9 +111,9 @@ public class NanoSystemService(
             ObjectId = radialAnalysisObjectId,
             LayerCount = analysisZoneCount,
             PointCount = analysisVectorCount,
-            InputDate = DateTime.Now,
-            StartDate = analysisStartDate,
-            EndDate = analysisEndDate,
+            InputDate = DateTime.Now.ToUniversalTime(),
+            StartDate = analysisStartDate.ToUniversalTime(),
+            EndDate = analysisEndDate.ToUniversalTime(),
         });
         
         var entity = new Nanosystem

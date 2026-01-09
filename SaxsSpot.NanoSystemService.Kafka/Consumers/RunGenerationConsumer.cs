@@ -18,7 +18,6 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
 
         try
         {
-            // Map RunGenerationRequest to RunGenerationCommand
             var command = new RunGenerationCommand(
                 request.Parameters,
                 request.OperationId,
