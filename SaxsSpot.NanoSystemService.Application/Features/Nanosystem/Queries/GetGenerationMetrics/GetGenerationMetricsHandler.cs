@@ -2,6 +2,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Interfaces;
+using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetGenerationMetrics;
 
@@ -14,9 +15,15 @@ public class GetGenerationMetricsHandler(
     {
         try
         {
-            var metrics = await particleGenerationMetricsStorage.WhereAsync(x =>
-                x.NanosystemId == request.NanosystemId &&
-                (request.ParticleIndexRanges == null || request.ParticleIndexRanges.Any(i => i.FromIndex <= x.ParticleIndex && i.ToIndex >= x.ParticleIndex)));
+            var metrics = new List<ParticleGenerationMetrics>();
+            
+            foreach (var range in request.ParticleIndexRanges)
+            {
+                metrics.AddRange(await particleGenerationMetricsStorage.WhereAsync(x =>
+                                x.NanosystemId == request.NanosystemId &&
+                                range.FromIndex <= x.ParticleIndex && range.ToIndex >= x.ParticleIndex));
+            }
+
             
             var result = metrics.Select(m => new GenerationMetricsDto
             {
