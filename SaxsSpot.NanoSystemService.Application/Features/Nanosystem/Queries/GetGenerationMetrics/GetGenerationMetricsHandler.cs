@@ -16,7 +16,7 @@ public class GetGenerationMetricsHandler(
         {
             var metrics = await particleGenerationMetricsStorage.WhereAsync(x =>
                 x.NanosystemId == request.NanosystemId &&
-                (request.IndexRanges == null || request.ParticleIndexRanges.Any(i => i.FromIndex <= x.ParticleIndex && i.ToIndex >= x.ParticleIndex)));
+                (request.ParticleIndexRanges == null || request.ParticleIndexRanges.Any(i => i.FromIndex <= x.ParticleIndex && i.ToIndex >= x.ParticleIndex)));
             
             var result = metrics.Select(m => new GenerationMetricsDto
             {
