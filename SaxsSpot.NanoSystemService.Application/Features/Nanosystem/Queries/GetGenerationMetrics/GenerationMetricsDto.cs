@@ -27,22 +27,8 @@ public record GenerationMetricsDto
     public int SATCheckTimesPositive { get; init; }
     public int SATCheckTimesTotal { get; init; }
     
-    // Calculated properties
-    public double InsertionEfficiency => TotalAttempts > 0 ? (double)PositiveAttempts / TotalAttempts : 0;
-    public double FirstNodeIntersectionEfficiency => TotalAttempts > 0 ? (double)FirstNodeIntersectionFindTimes / TotalAttempts : 0;
+    // Calculated properties (only non-efficiency metrics)
     public double AverageNeighborsCheckedPerAttempt => TotalAttempts > 0 ? (double)TotalNeighborsNodesCheckedCount / TotalAttempts : 0;
-    public double DiagonalDistanceCheckEfficiency => IsInterCenterDistanceMoreThenDiagonalCheckTimesTotal > 0 
-        ? (double)IsInterCenterDistanceMoreThenDiagonalCheckTimesPositive / IsInterCenterDistanceMoreThenDiagonalCheckTimesTotal : 0;
-    public double SidesDistanceCheckEfficiency => IsInterCenterDistanceLessThenSidesCheckTimesTotal > 0 
-        ? (double)IsInterCenterDistanceLessThenSidesCheckTimesPositive / IsInterCenterDistanceLessThenSidesCheckTimesTotal : 0;
-    public double ElementaryIntersectionNewTransformationEfficiency => ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal > 0 
-        ? (double)ElementaryIntersectCheckOnlyBordersNewTransformationTimesPositive / ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal : 0;
-    public double ElementaryIntersectionOldTransformationEfficiency => ElementaryIntersectCheckOnlyBordersOldTransformationTimesTotal > 0 
-        ? (double)ElementaryIntersectCheckOnlyBordersOldTransformationTimesPositive / ElementaryIntersectCheckOnlyBordersOldTransformationTimesTotal : 0;
-    public double BackRotateMatrixReusedEfficiency => ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal > 0 
-        ? (double)BackRotateMatrixReused / ElementaryIntersectCheckOnlyBordersNewTransformationTimesTotal : 0;
-    public double SATCheckEfficiency => SATCheckTimesTotal > 0 
-        ? (double)SATCheckTimesPositive / SATCheckTimesTotal : 0;
     public double AverageParticlesCheckedPerAttempt => TotalAttempts > 0 
         ? (double)ParticlesCheckedForIntersection / TotalAttempts : 0;
     public double OutOfZoneAttemptsRatio => TotalAttempts > 0 
