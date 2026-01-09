@@ -40,7 +40,7 @@ public static class ServiceCollectionExtension
                             // Create topic if it doesn't exist with default settings
                             e.CreateIfMissing(t =>
                             {
-                                t.NumPartitions = 1;
+                                t.NumPartitions = 5;
                                 t.ReplicationFactor = 1;
                             });
                             
