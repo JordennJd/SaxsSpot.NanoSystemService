@@ -1,6 +1,7 @@
 using SaxsSpot.NanoSystemService.Application.Extensions;
 using SaxsSpot.NanoSystemService.Host.Middlewares;
 using SaxsSpot.NanoSystemService.Host.Settings;
+using SaxsSpot.NanoSystemService.Kafka.Extensions;
 using SaxsSpot.NanoSystemService.Storage.Extensions;
 using SaxsSpot.Shared.Authenticator.Extensions;
 using SaxsSpot.Shared.ProgressTrackerClient.Extensions;
@@ -36,7 +37,8 @@ builder.Services.AddCors(options =>
 
 builder.Services
     .AddApplication(builder.Configuration)
-    .AddNanoSystemServiceStorage();
+    .AddNanoSystemServiceStorage()
+    .AddKafkaConsumer(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();

@@ -9,4 +9,5 @@ public record MassGenerateNanoSystemOptions<TParticle>(
     
 public record MassGenerateNanoSystemOptions(
     IList<CommonParticleGenerationParameters> Options,
-    ParticleKind NanoSystemsKind);
+    ParticleKind NanoSystemsKind,
+    IList<int>? PointCounts = null);

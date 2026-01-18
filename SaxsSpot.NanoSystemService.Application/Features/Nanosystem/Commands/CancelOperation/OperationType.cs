@@ -3,12 +3,10 @@ namespace SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.Ca
 public static class OperationType
 {
     public const string MassGeneration = "manual-series-run";
-    public const string RadialAnalysis = "RunRadialAnalysis";
     
     private static readonly HashSet<string> SupportedTypes = new()
     {
         MassGeneration,
-        RadialAnalysis
     };
     
     public static bool IsSupported(string operationType)

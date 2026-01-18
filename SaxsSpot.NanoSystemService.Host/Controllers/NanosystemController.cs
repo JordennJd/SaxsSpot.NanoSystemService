@@ -13,6 +13,7 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNano
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSphereScatteringCalculationParameters;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetGenerationMetrics;
 using SaxsSpot.Shared.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Host.Controllers;
@@ -20,13 +21,6 @@ namespace SaxsSpot.NanoSystemService.Host.Controllers;
 [Route("api/nanosystem")]
 public class NanosystemController(IMediator mediator) : Controller
 {
-    [HttpPost("run-generation")]
-    public async Task<IActionResult> RunGeneration([FromBody] CommonParticleGenerationParameters dto)
-    {
-        var result = await mediator.Send(new RunGenerationCommand(dto));
-        return Ok(result.ToResultDto());
-    }
-    
     [HttpPost("run-mass-generation")]
     public async Task<IActionResult> RunMassGeneration([FromBody] MassGenerateNanoSystemOptions dto)
     {
@@ -111,6 +105,13 @@ public class NanosystemController(IMediator mediator) : Controller
     public async Task<IActionResult> GetNanosystem([FromQuery] ApiQuery query)
     {
         var result = await mediator.Send(new GetNanosystemsQuery(query));
+        return Ok(result.ToResultDto());
+    }
+    
+    [HttpPost("get-generation-metrics")]
+    public async Task<IActionResult> GetGenerationMetrics([FromBody] GetGenerationMetricsQuery query)
+    {
+        var result = await mediator.Send(query);
         return Ok(result.ToResultDto());
     }
 }

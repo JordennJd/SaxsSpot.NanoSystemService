@@ -57,6 +57,13 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
                 .Select(x => (double?)x).ToArray();
         }
 
+        List<int>? pointCounts = null;
+        if (r.PointCountFrom.HasValue && r.PointCountTo.HasValue)
+        {
+            pointCounts = Generate.LinearSpaced(count, r.PointCountFrom.Value, r.PointCountTo.Value)
+                .Select(v => (int)v).ToList();
+        }
+
         for (int i = 0; i < count; i++)
         {
             parametersList.Add(new CommonParticleGenerationParameters( particleCounts[i],
@@ -65,6 +72,6 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
 
         }
 
-        return Task.FromResult(FluentResults.Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind)));
+        return Task.FromResult(FluentResults.Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind, pointCounts)));
     }
 }

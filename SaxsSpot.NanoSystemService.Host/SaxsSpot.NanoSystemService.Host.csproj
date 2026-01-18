@@ -11,8 +11,10 @@
         <PackageReference Include="FluentResults" Version="4.0.0" />
         <PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.2.0" />
         <PackageReference Include="MediatR" Version="13.0.0" />
+        <PackageReference Include="MassTransit" Version="8.4.1" />
+        <PackageReference Include="MassTransit.Kafka" Version="8.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="2.0.4" />
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="2.2.0" />
         <PackageReference Include="SaxsSpot.Shared.Authenticator" Version="1.2.1" />
         <PackageReference Include="SaxsSpot.Shared.Contracts" Version="1.2.1" />
     </ItemGroup>
@@ -20,6 +22,7 @@
     <ItemGroup>
       <ProjectReference Include="..\SaxsSpot.NanoSystemService.Application\SaxsSpot.NanoSystemService.Application.csproj" />
       <ProjectReference Include="..\SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj" />
+      <ProjectReference Include="..\SaxsSpot.NanoSystemService.Kafka\SaxsSpot.NanoSystemService.Kafka.csproj" />
       <ProjectReference Include="..\SaxsSpot.NanoSystemService.Storage\SaxsSpot.NanoSystemService.Storage.csproj" />
     </ItemGroup>
 
