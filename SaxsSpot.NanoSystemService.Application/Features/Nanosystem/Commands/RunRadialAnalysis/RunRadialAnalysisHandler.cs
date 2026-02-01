@@ -36,115 +36,115 @@ public class RunRadialAnalysisHandler(
                 "Starting radial analysis for nanosystem {NanosystemId} with operation id {OperationId}. LayerCount: {LayerCount}, PointCount: {PointCount}",
                 request.NanosystemId, operationGuid, request.LayerCount, request.PointCount);
             
-            var nanosystem = await nanosystemStorage.FirstOrDefaultAsync(x => x.Id == request.NanosystemId);
-            if (nanosystem == null)
-            {
+        var nanosystem = await nanosystemStorage.FirstOrDefaultAsync(x => x.Id == request.NanosystemId);
+        if (nanosystem == null)
+        {
                 logger.LogWarning("Nanosystem with ID {NanosystemId} not found for operation {OperationId}", 
                     request.NanosystemId, operationGuid);
-                throw new ArgumentException($"Nanosystem with ID {request.NanosystemId} does not exist.");
-            }
-            
+            throw new ArgumentException($"Nanosystem with ID {request.NanosystemId} does not exist.");
+        }
+        
             logger.LogDebug("Loading nanosystem object {ObjectId} for nanosystem {NanosystemId}", 
                 nanosystem.ObjectId, nanosystem.Id);
             
-            var nanosystemObject = nanosystemObjectStorage.Load(nanosystem.ObjectId, cancellationToken);
+        var nanosystemObject = nanosystemObjectStorage.Load(nanosystem.ObjectId, cancellationToken);
             var inputDate = DateTime.UtcNow;
             
-            _ = Task.Run(async () =>
-            {
-                using var scope = scopeFactory.CreateScope();
+        _ = Task.Run(async () =>
+        {
+            using var scope = scopeFactory.CreateScope();
 
-                var radialAnalysisObjectStorage = scope.ServiceProvider.GetService<IRadialAnalysisObjectStorage>();
-                var radialAnalysisStorage = scope.ServiceProvider.GetService<IRadialAnalysisStorage>();
+            var radialAnalysisObjectStorage = scope.ServiceProvider.GetService<IRadialAnalysisObjectStorage>();
+            var radialAnalysisStorage = scope.ServiceProvider.GetService<IRadialAnalysisStorage>();
                 var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
                 
                 logger.LogDebug("Creating job for radial analysis operation {OperationId}", operationGuid);
-                
-                var result = await jobService!.CreateJobAsync(new JobModels.CreateJobQuery(operationGuid.ToString(), JobType,
-                    "radial analysis started", JsonSerializer.Serialize(request)));
-                
-                if (result.IsSuccessful is false)
-                {
+
+            var result = await jobService!.CreateJobAsync(new JobModels.CreateJobQuery(operationGuid.ToString(), JobType,
+                "radial analysis started", JsonSerializer.Serialize(request)));
+            
+            if (result.IsSuccessful is false)
+            {
                     logger.LogError("Failed to create job for operation {OperationId}. Error: {ErrorMessage}", 
                         operationGuid, result.ErrorMessage);
-                    throw new InvalidOperationException(
-                        $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
-                }
+                throw new InvalidOperationException(
+                    $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
+            }
 
                 logger.LogInformation("Job created successfully for operation {OperationId}", operationGuid);
                 
                 var startDate = DateTime.UtcNow;
-                try
-                {
+            try
+            {
                     logger.LogDebug("Starting job for operation {OperationId}", operationGuid);
                     
-                    result = await jobService.StartJobAsync(new JobModels.StartJobQuery(operationGuid.ToString()));
-                    if (result.IsSuccessful is false)
-                    {
+                result = await jobService.StartJobAsync(new JobModels.StartJobQuery(operationGuid.ToString()));
+                if (result.IsSuccessful is false)
+                {
                         logger.LogError("Failed to start job for operation {OperationId}. Error: {ErrorMessage}", 
                             operationGuid, result.ErrorMessage);
-                        throw new InvalidOperationException(
-                            $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
-                    }
+                    throw new InvalidOperationException(
+                        $"Operation not started with id {operationGuid} with error on remote server {result.ErrorMessage}");
+                }
 
                     logger.LogInformation("Job started successfully for operation {OperationId}. Starting analysis for particle kind {ParticleKind}", 
                         operationGuid, nanosystem.ParticleKind);
-                    
-                    ICollection<ZoneConcentrationAnalyze> analysis;
-                    if (nanosystem.ParticleKind == ParticleKind.Parallelepiped)
-                    {
+                
+                ICollection<ZoneConcentrationAnalyze> analysis;
+                if (nanosystem.ParticleKind == ParticleKind.Parallelepiped)
+                {
                         logger.LogDebug("Running analysis for Parallelepiped particles. Operation {OperationId}", operationGuid);
-                        analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
-                                .ToBlockingEnumerable()
-                                .Select(x => (Parallelepiped)x).ToList(),
-                            new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
-                            request.PointCount);
-                    }
-                    else 
-                    {
+                    analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
+                            .ToBlockingEnumerable()
+                            .Select(x => (Parallelepiped)x).ToList(),
+                        new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
+                        request.PointCount);
+                }
+                else 
+                {
                         logger.LogDebug("Running analysis for Sphere particles. Operation {OperationId}", operationGuid);
-                        analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
-                                .ToBlockingEnumerable()
-                                .Select(x => (Sphere)x).ToList(),
-                            new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
-                            request.PointCount);
-                    }
+                    analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
+                            .ToBlockingEnumerable()
+                            .Select(x => (Sphere)x).ToList(),
+                        new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
+                        request.PointCount);
+                }
 
                     logger.LogInformation("Analysis completed for operation {OperationId}. Generated {AnalysisCount} zones", 
                         operationGuid, analysis.Count);
 
-                    var objectId = Guid.NewGuid();
+                var objectId = Guid.NewGuid();
                     logger.LogDebug("Saving analysis data with object id {ObjectId} for operation {OperationId}", 
                         objectId, operationGuid);
                     
-                    await radialAnalysisObjectStorage.Save(analysis, objectId);
+                await radialAnalysisObjectStorage.Save(analysis, objectId);
 
                     var endDate = DateTime.UtcNow;
                     var duration = endDate - startDate;
                     
                     logger.LogDebug("Saving radial analysis entity for operation {OperationId}", operationGuid);
-                    
-                    await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
-                    {
-                        Id = operationGuid,
-                        NanosystemId = nanosystem.Id,
+
+                await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
+                {
+                    Id = operationGuid,
+                    NanosystemId = nanosystem.Id,
                         ObjectId = objectId,
-                        LayerCount = request.LayerCount,
-                        PointCount = request.PointCount,
+                    LayerCount = request.LayerCount,
+                    PointCount = request.PointCount,
                         InputDate = inputDate,
                         StartDate = startDate,
                         EndDate = endDate,
-                    });
-                    
+                });
+                
                     logger.LogInformation(
                         "Radial analysis completed successfully for operation {OperationId}. Duration: {Duration}ms. Zones: {AnalysisCount}",
                         operationGuid, duration.TotalMilliseconds, analysis.Count);
                     
-                    await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
-                        "radial analysis completed"));
-                }
-                catch (Exception e)
-                {
+                await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
+                    "radial analysis completed"));
+            }
+            catch (Exception e)
+            {
                     var endDate = DateTime.UtcNow;
                     var duration = endDate - startDate;
                     
@@ -152,13 +152,13 @@ public class RunRadialAnalysisHandler(
                         "Error occurred during radial analysis for operation {OperationId} after {Duration}ms. Error: {ErrorMessage}", 
                         operationGuid, duration.TotalMilliseconds, e.Message);
                     
-                    await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
-                        e.Message, true));
-                }
-            }, cancellationToken);
-            
+                await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
+                    e.Message, true));
+            }
+        }, cancellationToken);
+        
             logger.LogInformation("Radial analysis task started for operation {OperationId}", operationGuid);
-            return FluentResults.Result.Ok(operationGuid);
+        return FluentResults.Result.Ok(operationGuid);
         }
         catch (OperationCanceledException ex)
         {
