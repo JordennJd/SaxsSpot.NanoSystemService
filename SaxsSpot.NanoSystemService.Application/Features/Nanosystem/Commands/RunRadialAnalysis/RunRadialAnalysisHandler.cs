@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.AnalyzeModels;
+using RadialAnalysisLayerResult = SaxsSpot.NanoSystemGeneration.Contracts.Models.AnalyzeModels.RadialAnalysisLayerResult;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationZones;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
@@ -90,11 +91,11 @@ public class RunRadialAnalysisHandler(
                     logger.LogInformation("Job started successfully for operation {OperationId}. Starting analysis for particle kind {ParticleKind}", 
                         operationGuid, nanosystem.ParticleKind);
                 
-                ICollection<ZoneConcentrationAnalyze> analysis;
+                ICollection<RadialAnalysisLayerResult> analysisLayers;
                 if (nanosystem.ParticleKind == ParticleKind.Parallelepiped)
                 {
                         logger.LogDebug("Running analysis for Parallelepiped particles. Operation {OperationId}", operationGuid);
-                    analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
+                    analysisLayers = NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(nanosystemObject
                             .ToBlockingEnumerable()
                             .Select(x => (Parallelepiped)x).ToList(),
                         new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
@@ -103,7 +104,7 @@ public class RunRadialAnalysisHandler(
                 else 
                 {
                         logger.LogDebug("Running analysis for Sphere particles. Operation {OperationId}", operationGuid);
-                    analysis = NanosystemAnalyzer.GetNanosystemAnalyze(nanosystemObject
+                    analysisLayers = NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(nanosystemObject
                             .ToBlockingEnumerable()
                             .Select(x => (Sphere)x).ToList(),
                         new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
@@ -111,7 +112,7 @@ public class RunRadialAnalysisHandler(
                 }
 
                     logger.LogInformation("Analysis completed for operation {OperationId}. Generated {AnalysisCount} zones", 
-                        operationGuid, analysis.Count);
+                        operationGuid, analysisLayers.Count);
 
                     logger.LogDebug("Saving analysis layers to DB for operation {OperationId}", operationGuid);
 
@@ -127,17 +128,16 @@ public class RunRadialAnalysisHandler(
                     EndDate = DateTime.UtcNow,
                 });
 
-                var pointCountPerLayer = request.LayerCount > 0 ? request.PointCount / request.LayerCount : 0;
-                var layerEntities = analysis.Select(a => new RadialAnalysisLayer
+                var layerEntities = analysisLayers.Select(l => new RadialAnalysisLayer
                 {
                     Id = Guid.NewGuid(),
                     RadialAnalysisId = operationGuid,
                     NanosystemId = nanosystem.Id,
-                    LayerIndex = a.ZoneIndex,
-                    LayerFrom = 0,
-                    LayerTo = 0,
-                    NumericalConcentration = a.Concentration,
-                    PointCount = pointCountPerLayer,
+                    LayerIndex = l.ZoneIndex,
+                    LayerFrom = l.LayerFrom,
+                    LayerTo = l.LayerTo,
+                    NumericalConcentration = l.NumericalConcentration,
+                    PointCount = l.PointCount,
                 }).ToList();
                 await radialAnalysisLayerStorage.AddRangeAsync(layerEntities, cancellationToken);
 
@@ -146,7 +146,7 @@ public class RunRadialAnalysisHandler(
                 
                     logger.LogInformation(
                         "Radial analysis completed successfully for operation {OperationId}. Duration: {Duration}ms. Zones: {AnalysisCount}",
-                        operationGuid, duration.TotalMilliseconds, analysis.Count);
+                        operationGuid, duration.TotalMilliseconds, analysisLayers.Count);
                     
                 await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
                     "radial analysis completed"));
