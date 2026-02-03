@@ -5,7 +5,7 @@ namespace SaxsSpot.NanoSystemService.Application.Services;
 public static class RadialAnalysisWriter
 {
     /// <summary>
-    /// Writes one line per layer: index (layerFrom - layerTo) NC.
+    /// Writes one line per layer: index (layerFrom - layerTo) NC pointCount.
     /// </summary>
     public static async Task<MemoryStream> Write(RadialAnalysis radialAnalysis, IReadOnlyList<RadialAnalysisLayer> layers)
     {
@@ -14,7 +14,7 @@ public static class RadialAnalysisWriter
         {
             foreach (var layer in layers.OrderBy(l => l.LayerIndex))
             {
-                await writer.WriteLineAsync($"{layer.LayerIndex} ({layer.LayerFrom} - {layer.LayerTo}) {layer.NumericalConcentration}");
+                await writer.WriteLineAsync($"{layer.LayerIndex} ({layer.LayerFrom} - {layer.LayerTo}) {layer.NumericalConcentration} {layer.PointCount}");
             }
             await writer.FlushAsync();
         }
