@@ -1,29 +1,37 @@
 using System.Text.Json;
-using SaxsSpot.NanoSystemGeneration.Contracts.Models.AnalyzeModels;
 using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Application.Services;
 
 public static class RadialAnalysisWriter
 {
-    public static async Task<MemoryStream> Write(IAsyncEnumerable<ZoneConcentrationAnalyze> analysis, RadialAnalysis radialAnalysis)
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = false
+    };
+
+    /// <summary>
+    /// Writes radial analysis and all layer data (as in DB) to stream: first line = metadata JSON, then one JSON line per layer.
+    /// </summary>
+    public static async Task<MemoryStream> Write(RadialAnalysis radialAnalysis, IReadOnlyList<RadialAnalysisLayer> layers)
     {
         var memoryStream = new MemoryStream();
-        
-        var json = JsonSerializer.Serialize(radialAnalysis);
         await using (var writer = new StreamWriter(memoryStream, leaveOpen: true))
         {
-            await writer.WriteLineAsync(json);
-            await foreach (var zone in analysis)
+            var metadataJson = JsonSerializer.Serialize(radialAnalysis, JsonOptions);
+            await writer.WriteLineAsync(metadataJson);
+
+            foreach (var layer in layers.OrderBy(l => l.LayerIndex))
             {
-                await writer.WriteLineAsync(zone.ToString());
+                var layerJson = JsonSerializer.Serialize(layer, JsonOptions);
+                await writer.WriteLineAsync(layerJson);
             }
 
             await writer.FlushAsync();
         }
 
         memoryStream.Position = 0;
-
         return memoryStream;
     }
 }

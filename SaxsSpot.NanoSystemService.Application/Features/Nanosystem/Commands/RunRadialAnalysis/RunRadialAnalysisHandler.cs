@@ -54,8 +54,8 @@ public class RunRadialAnalysisHandler(
         {
             using var scope = scopeFactory.CreateScope();
 
-            var radialAnalysisObjectStorage = scope.ServiceProvider.GetService<IRadialAnalysisObjectStorage>();
-            var radialAnalysisStorage = scope.ServiceProvider.GetService<IRadialAnalysisStorage>();
+            var radialAnalysisLayerStorage = scope.ServiceProvider.GetRequiredService<IRadialAnalysisLayerStorage>();
+            var radialAnalysisStorage = scope.ServiceProvider.GetRequiredService<IRadialAnalysisStorage>();
                 var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
                 
                 logger.LogDebug("Creating job for radial analysis operation {OperationId}", operationGuid);
@@ -113,28 +113,36 @@ public class RunRadialAnalysisHandler(
                     logger.LogInformation("Analysis completed for operation {OperationId}. Generated {AnalysisCount} zones", 
                         operationGuid, analysis.Count);
 
-                var objectId = Guid.NewGuid();
-                    logger.LogDebug("Saving analysis data with object id {ObjectId} for operation {OperationId}", 
-                        objectId, operationGuid);
-                    
-                await radialAnalysisObjectStorage.Save(analysis, objectId);
-
-                    var endDate = DateTime.UtcNow;
-                    var duration = endDate - startDate;
-                    
-                    logger.LogDebug("Saving radial analysis entity for operation {OperationId}", operationGuid);
+                    logger.LogDebug("Saving analysis layers to DB for operation {OperationId}", operationGuid);
 
                 await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
                 {
                     Id = operationGuid,
                     NanosystemId = nanosystem.Id,
-                        ObjectId = objectId,
+                    ObjectId = Guid.Empty,
                     LayerCount = request.LayerCount,
                     PointCount = request.PointCount,
-                        InputDate = inputDate,
-                        StartDate = startDate,
-                        EndDate = endDate,
+                    InputDate = inputDate,
+                    StartDate = startDate,
+                    EndDate = DateTime.UtcNow,
                 });
+
+                var pointCountPerLayer = request.LayerCount > 0 ? request.PointCount / request.LayerCount : 0;
+                var layerEntities = analysis.Select(a => new RadialAnalysisLayer
+                {
+                    Id = Guid.NewGuid(),
+                    RadialAnalysisId = operationGuid,
+                    NanosystemId = nanosystem.Id,
+                    LayerIndex = a.ZoneIndex,
+                    LayerFrom = 0,
+                    LayerTo = 0,
+                    NumericalConcentration = a.Concentration,
+                    PointCount = pointCountPerLayer,
+                }).ToList();
+                await radialAnalysisLayerStorage.AddRangeAsync(layerEntities, cancellationToken);
+
+                    var endDate = DateTime.UtcNow;
+                    var duration = endDate - startDate;
                 
                     logger.LogInformation(
                         "Radial analysis completed successfully for operation {OperationId}. Duration: {Duration}ms. Zones: {AnalysisCount}",

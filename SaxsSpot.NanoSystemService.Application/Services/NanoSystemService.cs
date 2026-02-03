@@ -1,5 +1,6 @@
 using AutoMapper;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
+using SaxsSpot.NanoSystemGeneration.Contracts.Models.AnalyzeModels;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.GenerationParameters;
 using SaxsSpot.NanoSystemGeneration.Engine.Services;
@@ -15,7 +16,7 @@ public class NanoSystemService(
     INanoSystemObjectStorage objectStorage,
     INanoSystemStorage storage,
     INanoSystemSeriesStorage seriesStorage,
-    IRadialAnalysisObjectStorage radialAnalysisObjectStorage,
+    IRadialAnalysisLayerStorage radialAnalysisLayerStorage,
     IRadialAnalysisStorage radialAnalysisStorage,
     IGenerationMetricsStorage generationMetricsStorage,
     IParticleGenerationMetricsStorage particleGenerationMetricsStorage,
@@ -113,20 +114,32 @@ public class NanoSystemService(
             var analysisEndDate = DateTime.Now;
 
             avgByFiveZone = analysis.Take(5).Average(x => x.Concentration);
-            
-            var radialAnalysisObjectId = Guid.NewGuid();
-            await radialAnalysisObjectStorage.Save(analysis, radialAnalysisObjectId);
+
+            var radialAnalysisId = Guid.NewGuid();
             await radialAnalysisStorage.UpdateOrInsertAsync(new RadialAnalysis()
             {
-                Id = Guid.NewGuid(),
+                Id = radialAnalysisId,
                 NanosystemId = nanosystemId,
-                ObjectId = radialAnalysisObjectId,
+                ObjectId = Guid.Empty,
                 LayerCount = analysisZoneCount,
                 PointCount = analysisVectorCount,
                 InputDate = DateTime.Now.ToUniversalTime(),
                 StartDate = analysisStartDate.ToUniversalTime(),
                 EndDate = analysisEndDate.ToUniversalTime(),
             });
+            var pointCountPerLayer = analysisZoneCount > 0 ? analysisVectorCount / analysisZoneCount : 0;
+            var layerEntities = analysis.Select(a => new RadialAnalysisLayer
+            {
+                Id = Guid.NewGuid(),
+                RadialAnalysisId = radialAnalysisId,
+                NanosystemId = nanosystemId,
+                LayerIndex = a.ZoneIndex,
+                LayerFrom = 0,
+                LayerTo = 0,
+                NumericalConcentration = a.Concentration,
+                PointCount = pointCountPerLayer,
+            }).ToList();
+            await radialAnalysisLayerStorage.AddRangeAsync(layerEntities);
         }
         else
         {
