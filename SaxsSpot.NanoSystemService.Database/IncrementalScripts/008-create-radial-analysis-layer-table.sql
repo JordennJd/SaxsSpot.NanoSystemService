@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS saxs.radial_analysis_layer (
     numerical_concentration DOUBLE PRECISION NOT NULL,
     point_count INTEGER NOT NULL,
     CONSTRAINT fk_radial_analysis_layer_radial_analysis FOREIGN KEY (radial_analysis_id) REFERENCES saxs.radial_analysis(id) ON DELETE CASCADE,
-    CONSTRAINT fk_radial_analysis_layer_nanosystem FOREIGN KEY (nanosystem_id) REFERENCES saxs.nanosystem(id) ON DELETE CASCADE,
+    -- nanosystem_id not FK: nanosystem may live in public schema; integrity via radial_analysis.nanosystem_id
     CONSTRAINT chk_radial_analysis_layer_point_count CHECK (point_count >= 0),
     CONSTRAINT chk_radial_analysis_layer_layer_index CHECK (layer_index >= 0),
     CONSTRAINT chk_radial_analysis_layer_concentration CHECK (numerical_concentration >= 0),
