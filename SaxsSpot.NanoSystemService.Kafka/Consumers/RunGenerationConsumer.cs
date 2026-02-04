@@ -85,7 +85,7 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
         catch (OperationCanceledException)
         {
             logger.LogWarning("RunGenerationRequest processing was canceled. OperationId: {OperationId}", request.OperationId);
-            return;
+            throw;
         }
         catch (Exception ex)
         {
