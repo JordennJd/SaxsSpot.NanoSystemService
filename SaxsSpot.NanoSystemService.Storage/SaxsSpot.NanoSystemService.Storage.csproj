@@ -20,4 +20,7 @@
     <PackageReference Include="SaxsSpot.Core.Contracts" Version="2.1.0" />
     <PackageReference Include="SaxsSpot.Core.GenericStorage" Version="2.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\SaxsSpot.NanoSystemService.Storage.1.0.4.nupkg" />
+  </ItemGroup>
 </Project>
