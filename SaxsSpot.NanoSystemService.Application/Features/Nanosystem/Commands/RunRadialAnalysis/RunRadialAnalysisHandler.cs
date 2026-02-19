@@ -51,13 +51,14 @@ public class RunRadialAnalysisHandler(
         var nanosystemObject = nanosystemObjectStorage.Load(nanosystem.ObjectId, cancellationToken);
             var inputDate = DateTime.UtcNow;
             
+        // Do not pass cancellationToken: background work must run to completion after response is sent.
         _ = Task.Run(async () =>
         {
             using var scope = scopeFactory.CreateScope();
 
             var radialAnalysisLayerStorage = scope.ServiceProvider.GetRequiredService<IRadialAnalysisLayerStorage>();
             var radialAnalysisStorage = scope.ServiceProvider.GetRequiredService<IRadialAnalysisStorage>();
-                var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
+            var jobService = scope.ServiceProvider.GetService<IJobServiceClient>();
                 
                 logger.LogDebug("Creating job for radial analysis operation {OperationId}", operationGuid);
 
@@ -143,7 +144,7 @@ public class RunRadialAnalysisHandler(
                     NumericalConcentration = l.NumericalConcentration,
                     PointCount = l.PointCount,
                 }).ToList();
-                await radialAnalysisLayerStorage.AddRangeAsync(layerEntities, cancellationToken);
+                await radialAnalysisLayerStorage.AddRangeAsync(layerEntities, CancellationToken.None);
 
                     var endDate = DateTime.UtcNow;
                     var duration = endDate - startDate;
@@ -167,7 +168,7 @@ public class RunRadialAnalysisHandler(
                 await jobService.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
                     e.Message, true));
             }
-        }, cancellationToken);
+        });
         
             logger.LogInformation("Radial analysis task started for operation {OperationId}", operationGuid);
         return FluentResults.Result.Ok(operationGuid);
