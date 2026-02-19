@@ -14,7 +14,7 @@
     <PackageReference Include="MassTransit" Version="8.4.1" />
     <PackageReference Include="MassTransit.Kafka" Version="8.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-    <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="3.2.1" />
+    <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="3.2.2" />
     <PackageReference Include="SaxsSpot.Shared.Authenticator" Version="1.2.1" />
     <PackageReference Include="SaxsSpot.Shared.Contracts" Version="1.2.1" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -11,6 +11,8 @@
             Include="..\SaxsSpot.NanoSystemService.Contracts\SaxsSpot.NanoSystemService.Contracts.csproj" />
         <ProjectReference
             Include="..\SaxsSpot.NanoSystemService.Domain\SaxsSpot.NanoSystemService.Domain.csproj" />
+        <ProjectReference
+            Include="..\..\SaxsSpot.NanoSystemGeneration\SaxsSpot.NanoSystemGeneration.Engine\SaxsSpot.NanoSystemGeneration.Engine.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,8 +21,7 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
         <PackageReference Include="Gridify" Version="2.16.3" />
         <PackageReference Include="MediatR" Version="13.0.0" />
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="3.2.1" />
-        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Engine" Version="3.2.1" />
+        <PackageReference Include="SaxsSpot.NanoSystemGeneration.Contracts" Version="3.2.2" />
         <PackageReference Include="SaxsSpot.Shared.Contracts" Version="1.2.1" />
         <PackageReference Include="SaxsSpot.Shared.ProgressTrackerClient" Version="1.2.1" />
         <PackageReference Include="SaxsSpot.Transport.Contracts" Version="1.0.33" />

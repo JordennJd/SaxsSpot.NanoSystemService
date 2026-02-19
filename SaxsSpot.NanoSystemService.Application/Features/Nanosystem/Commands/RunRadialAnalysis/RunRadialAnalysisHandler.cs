@@ -90,7 +90,41 @@ public class RunRadialAnalysisHandler(
 
                     logger.LogInformation("Job started successfully for operation {OperationId}. Starting analysis for particle kind {ParticleKind}", 
                         operationGuid, nanosystem.ParticleKind);
-                
+
+                    var progress = new Progress<float>();
+                    var lastReportedProgress = -1;
+                    var progressLock = new object();
+                    progress.ProgressChanged += (_, value) =>
+                    {
+                        var progressPercent = (int)Math.Round(value);
+                        lock (progressLock)
+                        {
+                            if (Math.Abs(progressPercent - lastReportedProgress) < 5 && lastReportedProgress >= 0)
+                                return;
+                            lastReportedProgress = progressPercent;
+                        }
+                        try
+                        {
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await jobService.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                                        operationGuid.ToString(),
+                                        $"Radial analysis in progress: {progressPercent}%"));
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.LogWarning(ex, "Failed to update job progress for operation {OperationId}", operationGuid);
+                                }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogWarning(ex, "Failed to schedule job progress update for operation {OperationId}", operationGuid);
+                        }
+                    };
+
                 ICollection<RadialAnalysisLayerResult> analysisLayers;
                 if (nanosystem.ParticleKind == ParticleKind.Parallelepiped)
                 {
@@ -99,7 +133,7 @@ public class RunRadialAnalysisHandler(
                             .ToBlockingEnumerable()
                             .Select(x => (Parallelepiped)x).ToList(),
                         new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
-                        request.PointCount);
+                        request.PointCount, progress);
                 }
                 else 
                 {
@@ -108,7 +142,7 @@ public class RunRadialAnalysisHandler(
                             .ToBlockingEnumerable()
                             .Select(x => (Sphere)x).ToList(),
                         new GenerationZone(nanosystem.GlobalSize, nanosystem.GenerationZoneForm), request.LayerCount,
-                        request.PointCount);
+                        request.PointCount, progress);
                 }
 
                     logger.LogInformation("Analysis completed for operation {OperationId}. Generated {AnalysisCount} zones", 
