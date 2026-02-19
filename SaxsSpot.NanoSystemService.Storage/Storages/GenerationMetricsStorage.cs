@@ -11,4 +11,9 @@ public class GenerationMetricsStorage(
     NanoSystemDbContext nanoSystemDbContext)
     : GenericStorage<GenerationMetrics>(dbContext), IGenerationMetricsStorage
 {
+    public async Task DeleteRangeAsync(IEnumerable<GenerationMetrics> entities)
+    {
+        dbContext.Entities.RemoveRange(entities);
+        await dbContext.SaveChangesAsync();
+    }
 }

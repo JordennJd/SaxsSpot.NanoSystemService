@@ -6,4 +6,6 @@ namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 public interface IRadialAnalysisLayerStorage : IGenericStorage<RadialAnalysisLayer>
 {
     Task AddRangeAsync(IEnumerable<RadialAnalysisLayer> layers, CancellationToken cancellationToken = default);
+    
+    Task DeleteRangeAsync(IEnumerable<RadialAnalysisLayer> entities);
 }

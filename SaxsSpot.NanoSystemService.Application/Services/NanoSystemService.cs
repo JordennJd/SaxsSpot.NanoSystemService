@@ -79,7 +79,9 @@ public class NanoSystemService(
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
-        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null, EventHandler<float>? analysisProgressHandler = null, bool needMetrics = false)
+        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20,
+        int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null, EventHandler<float>? analysisProgressHandler = null,
+        bool needMetrics = false)
     {
         var systemObjectGuid = Guid.NewGuid();
         

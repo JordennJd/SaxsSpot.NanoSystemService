@@ -15,4 +15,10 @@ public class ParticleGenerationMetricsStorage(ParticleGenerationMetricsDbContext
         dbContext.AddRange(metrics);
         await dbContext.SaveChangesAsync();
     }
+
+    public async Task DeleteRangeAsync(IEnumerable<ParticleGenerationMetrics> entities)
+    {
+        dbContext.Entities.RemoveRange(entities);
+        await dbContext.SaveChangesAsync();
+    }
 }

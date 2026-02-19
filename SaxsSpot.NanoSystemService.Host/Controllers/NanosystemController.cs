@@ -3,6 +3,8 @@ using Gridify;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.CancelOperation;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.DeleteNanosystem;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.DeleteSeries;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
@@ -114,4 +116,29 @@ public class NanosystemController(IMediator mediator) : Controller
         var result = await mediator.Send(query);
         return Ok(result.ToResultDto());
     }
+
+    [HttpDelete("delete-nanosystem")]
+    public async Task<IActionResult> DeleteNanosystem([FromBody] DeleteNanosystemRequest request)
+    {
+        var result = await mediator.Send(new DeleteNanosystemCommand(request.NanosystemId, request.Password));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+        return Ok(result.ToResultDto());
+    }
+
+    [HttpDelete("delete-series")]
+    public async Task<IActionResult> DeleteSeries([FromBody] DeleteSeriesRequest request)
+    {
+        var result = await mediator.Send(new DeleteSeriesCommand(request.SeriesId));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+        return Ok(result.ToResultDto());
+    }
+
+    public record DeleteNanosystemRequest(Guid NanosystemId, string Password);
+    public record DeleteSeriesRequest(Guid SeriesId);
 }

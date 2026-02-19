@@ -6,4 +6,6 @@ namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 public interface IParticleGenerationMetricsStorage : IGenericStorage<ParticleGenerationMetrics>
 {
     Task UpdateOrInsertAsync(IEnumerable<ParticleGenerationMetrics> metrics);
+    
+    Task DeleteRangeAsync(IEnumerable<ParticleGenerationMetrics> entities);
 }

@@ -7,4 +7,5 @@ namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 [SaxsService]
 public interface INanoSystemObjectStorage : ICommonObjectStorage<Particle>
 {
+    Task Delete(Guid objectId);
 }

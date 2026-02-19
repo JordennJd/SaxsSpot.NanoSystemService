@@ -13,4 +13,10 @@ public class RadialAnalysisLayerStorage(RadialAnalysisLayerDbContext dbContext)
         await dbContext.AddRangeAsync(layers, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteRangeAsync(IEnumerable<RadialAnalysisLayer> entities)
+    {
+        dbContext.Entities.RemoveRange(entities);
+        await dbContext.SaveChangesAsync();
+    }
 }

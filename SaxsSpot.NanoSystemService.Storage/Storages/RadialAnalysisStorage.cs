@@ -14,4 +14,10 @@ public class RadialAnalysisStorage(RadialAnalysisDbContext dbContext)
     {
         return dbContext.Entities.GridifyAsync(query);
     }
+
+    public async Task DeleteRangeAsync(IEnumerable<RadialAnalysis> entities)
+    {
+        dbContext.Entities.RemoveRange(entities);
+        await dbContext.SaveChangesAsync();
+    }
 }

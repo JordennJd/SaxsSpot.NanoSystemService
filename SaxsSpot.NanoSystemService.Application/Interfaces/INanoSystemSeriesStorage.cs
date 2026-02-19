@@ -7,4 +7,6 @@ namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 public interface INanoSystemSeriesStorage : IGenericStorage<NanosystemSeries>
 {
     Task<Paging<NanosystemSeries>> Gridify(GridifyQuery query);
+    
+    Task DeleteAsync(NanosystemSeries entity);
 }

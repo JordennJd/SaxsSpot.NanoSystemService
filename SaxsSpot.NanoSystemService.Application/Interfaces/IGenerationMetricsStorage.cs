@@ -3,4 +3,7 @@ using SaxsSpot.NanoSystemService.Domain;
 
 namespace SaxsSpot.NanoSystemService.Application.Interfaces;
 
-public interface IGenerationMetricsStorage : IGenericStorage<GenerationMetrics>;
+public interface IGenerationMetricsStorage : IGenericStorage<GenerationMetrics>
+{
+    Task DeleteRangeAsync(IEnumerable<GenerationMetrics> entities);
+}

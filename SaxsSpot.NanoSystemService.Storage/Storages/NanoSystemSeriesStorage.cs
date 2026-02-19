@@ -14,4 +14,10 @@ public class NanoSystemSeriesStorage(NanoSystemSeriesDbContext dbContext)
     {
         return dbContext.Entities.GridifyAsync(query);
     }
+
+    public async Task DeleteAsync(NanosystemSeries entity)
+    {
+        dbContext.Entities.Remove(entity);
+        await dbContext.SaveChangesAsync();
+    }
 }

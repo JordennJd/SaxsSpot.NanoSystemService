@@ -22,4 +22,10 @@ public class NanoSystemStorage(NanoSystemDbContext dbContext)
             .ApplyFiltering(filter)
             .ToListAsync();
     }
+
+    public async Task DeleteAsync(Nanosystem entity)
+    {
+        dbContext.Entities.Remove(entity);
+        await dbContext.SaveChangesAsync();
+    }
 }

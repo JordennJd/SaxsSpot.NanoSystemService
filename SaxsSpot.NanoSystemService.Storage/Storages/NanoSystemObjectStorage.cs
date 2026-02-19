@@ -1,14 +1,28 @@
 using System.Globalization;
 using Microsoft.Extensions.Configuration;
+using Minio;
+using Minio.DataModel.Args;
 using SaxsSpot.Core.CommonObjectStorage.Engine;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
 using SaxsSpot.NanoSystemService.Application.Interfaces;
 
 namespace SaxsSpot.NanoSystemService.Storage.Storages;
 
-public class NanoSystemObjectStorage(IConfiguration configuration)
-    : CommonObjectStorage<Particle>(configuration), INanoSystemObjectStorage
+public class NanoSystemObjectStorage : CommonObjectStorage<Particle>, INanoSystemObjectStorage
 {
+    private readonly IMinioClient _minioClient;
+    private readonly string? _bucketName;
+
+    public NanoSystemObjectStorage(IConfiguration configuration) : base(configuration)
+    {
+        var minioConfig = configuration.GetSection("minio");
+        _minioClient = new MinioClient()
+            .WithEndpoint(minioConfig["endpoint"])
+            .WithCredentials(minioConfig["accessKey"], minioConfig["secretKey"])
+            .WithSSL(false)
+            .Build();
+        _bucketName = minioConfig["bucketName"];
+    }
     protected override Stream GetStream(IEnumerable<Particle> data)
     {
         var stream = new MemoryStream();
@@ -55,5 +69,13 @@ public class NanoSystemObjectStorage(IConfiguration configuration)
                     break;
             }
         }
+    }
+
+    public async Task Delete(Guid objectId)
+    {
+        var objectName = $"{objectId}";
+        await _minioClient.RemoveObjectAsync(new RemoveObjectArgs()
+            .WithBucket(_bucketName)
+            .WithObject(objectName));
     }
 }
