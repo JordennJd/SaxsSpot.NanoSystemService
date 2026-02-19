@@ -132,6 +132,8 @@ public class RunGenerationHandler(
         }
         catch (OperationCanceledException e)
         {
+            await jobServiceClient.CompleteJobAsync(new JobModels.CompleteJobQuery(operationGuid.ToString(),
+                $"Generation failed with error {e.Message}", IsFailed: true));
 
             logger.Log(LogLevel.Information, $"Run generation canceled with operationId: {operationGuid}");
             throw;
