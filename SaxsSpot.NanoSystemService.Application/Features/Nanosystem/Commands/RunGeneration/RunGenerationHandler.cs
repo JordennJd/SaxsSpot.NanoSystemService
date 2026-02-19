@@ -77,8 +77,9 @@ public class RunGenerationHandler(
                 }
             };
             
-            // Create callback for when analysis starts
+            // Create callback for when analysis starts (initial message)
             Func<Task>? onAnalysisStarted = null;
+            EventHandler<float>? analysisProgressHandler = null;
             if (shouldPerformAnalysis)
             {
                 onAnalysisStarted = async () =>
@@ -87,7 +88,7 @@ public class RunGenerationHandler(
                     {
                         await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
                             operationGuid.ToString(),
-                            "Analysis started"));
+                            "Analysis in progress: 0%"));
                         logger.LogInformation("Analysis started notification sent for operation {OperationId}", operationGuid);
                     }
                     catch (Exception ex)
@@ -95,8 +96,38 @@ public class RunGenerationHandler(
                         logger.LogWarning(ex, "Failed to notify analysis start for operation {OperationId}", operationGuid);
                     }
                 };
+
+                // Update job message with analysis progress (throttle to every 5%)
+                var lastAnalysisProgress = -1;
+                analysisProgressHandler = (sender, progress) =>
+                {
+                    var progressPercent = (int)Math.Round(progress);
+                    if (Math.Abs(progressPercent - lastAnalysisProgress) < 5 && lastAnalysisProgress >= 0)
+                        return;
+                    lastAnalysisProgress = progressPercent;
+                    try
+                    {
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                                    operationGuid.ToString(),
+                                    $"Analysis in progress: {progressPercent}%"));
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogWarning(ex, "Failed to update analysis progress for operation {OperationId}", operationGuid);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to schedule analysis progress update for operation {OperationId}", operationGuid);
+                    }
+                };
             }
-            
+
             switch (request.Parameters.GetParticleKind())
             {
                 case ParticleKind.Parallelepiped:
@@ -108,6 +139,7 @@ public class RunGenerationHandler(
                         analysisZoneCount: analysisZoneCount, 
                         analysisVectorCount: analysisVectorCount,
                         onAnalysisStarted: onAnalysisStarted,
+                        analysisProgressHandler: analysisProgressHandler,
                         needMetrics: request.NeedMetrics);
                     break;
                 case ParticleKind.Sphere:
@@ -119,6 +151,7 @@ public class RunGenerationHandler(
                         analysisZoneCount: analysisZoneCount, 
                         analysisVectorCount: analysisVectorCount,
                         onAnalysisStarted: onAnalysisStarted,
+                        analysisProgressHandler: analysisProgressHandler,
                         needMetrics: request.NeedMetrics);
                     break;
                 default:

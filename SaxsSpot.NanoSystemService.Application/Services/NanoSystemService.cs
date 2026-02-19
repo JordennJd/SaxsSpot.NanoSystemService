@@ -79,7 +79,7 @@ public class NanoSystemService(
     }
     
     public async Task RunGeneration(ParticleGenerationParameters options, EventHandler<float>? progressHandler = null,
-        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null, bool needMetrics = false)
+        CancellationToken cancellationToken = default, Guid seriesId = default, int analysisZoneCount = 20, int analysisVectorCount = 5_000_000, Func<Task>? onAnalysisStarted = null, EventHandler<float>? analysisProgressHandler = null, bool needMetrics = false)
     {
         var systemObjectGuid = Guid.NewGuid();
         
@@ -108,11 +108,17 @@ public class NanoSystemService(
             {
                 await onAnalysisStarted();
             }
-            
+
+            var analysisProgress = new Progress<float>();
+            if (analysisProgressHandler is not null)
+            {
+                analysisProgress.ProgressChanged += analysisProgressHandler;
+            }
+
             var analysisStartDate = DateTime.Now;
             ICollection<RadialAnalysisLayerResult> analysisLayers = options.GetParticleKind() == ParticleKind.Parallelepiped
-                ? NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(distributeParticles.Select(x => (Parallelepiped)x).ToList(), generationZone, analysisZoneCount, analysisVectorCount)
-                : NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(distributeParticles.Select(x => (Sphere)x).ToList(), generationZone, analysisZoneCount, analysisVectorCount);
+                ? NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(distributeParticles.Select(x => (Parallelepiped)x).ToList(), generationZone, analysisZoneCount, analysisVectorCount, analysisProgress)
+                : NanosystemAnalyzer.GetNanosystemAnalyzeWithLayers(distributeParticles.Select(x => (Sphere)x).ToList(), generationZone, analysisZoneCount, analysisVectorCount, analysisProgress);
             var analysisEndDate = DateTime.Now;
 
             avgByFiveZone = analysisLayers.Take(5).Average(x => x.NumericalConcentration);
