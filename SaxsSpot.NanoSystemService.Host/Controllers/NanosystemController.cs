@@ -12,7 +12,9 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNano
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemGenerationOptions;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystemList;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystems;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetParticles;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
+using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSphereScatteringCalculationParameters;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetGenerationMetrics;
@@ -77,6 +79,23 @@ public class NanosystemController(IMediator mediator) : Controller
     {
         var result = await mediator.Send(query);
         return File(result.ValueOrDefault, "application/octet-stream", $"{query.Id}");
+    }
+
+    /// <summary>
+    /// Returns a slice of particles for 3D viewer. particleKind: 0 = Sphere, 1 = Parallelepiped (optional).
+    /// </summary>
+    [HttpGet("get-particles")]
+    public async Task<IActionResult> GetParticles(
+        [FromQuery] Guid nanosystemId,
+        [FromQuery] int skip = 0,
+        [FromQuery] int take = 10000,
+        [FromQuery] int? particleKind = null)
+    {
+        var filterKind = particleKind switch { 0 => ParticleKind.Sphere, 1 => ParticleKind.Parallelepiped, _ => (ParticleKind?)null };
+        var result = await mediator.Send(new GetParticlesQuery(nanosystemId, skip, take, filterKind));
+        if (result.IsFailed)
+            return BadRequest(result.ToResultDto());
+        return Ok(result.Value);
     }
     
     [HttpGet("nanosystem-calculation-parameters")]
