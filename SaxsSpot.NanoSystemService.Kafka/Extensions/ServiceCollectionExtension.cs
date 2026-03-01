@@ -39,12 +39,6 @@ public static class ServiceCollectionExtension
                         group,
                         e =>
                         {
-                            // Create topic if it doesn't exist with default settings
-                            e.CreateIfMissing(t =>
-                            {
-                                t.NumPartitions = 5;
-                                t.ReplicationFactor = 1;
-                            });
                             e.AutoOffsetReset = AutoOffsetReset.Earliest;
                             e.ConfigureConsumer<RunGenerationConsumer>(context, c =>
                             {
