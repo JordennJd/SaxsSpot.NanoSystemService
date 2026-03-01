@@ -40,6 +40,8 @@ public static class ServiceCollectionExtension
                         e =>
                         {
                             e.AutoOffsetReset = AutoOffsetReset.Earliest;
+                            // When true (default), offset is stored when message is delivered, so on shutdown it gets checkpointed even if we threw (e.g. cancel). Set false so offset is only committed after successful processing; on cancel/exception the message will be redelivered.
+                            e.EnableAutoOffsetStore = false;
                             e.ConfigureConsumer<RunGenerationConsumer>(context, c =>
                             {
                                 c.ConcurrentMessageLimit = 1;

@@ -86,7 +86,9 @@ public class RunGenerationConsumer(
         }
         catch (OperationCanceledException)
         {
-            logger.LogWarning("RunGenerationRequest processing was canceled. OperationId: {OperationId}", request.OperationId);
+            logger.LogWarning(
+                "RunGenerationRequest processing was canceled (application shutdown). OperationId: {OperationId}. The message will be redelivered and reprocessed when a consumer is available.",
+                request.OperationId);
             throw;
         }
         catch (Exception ex)

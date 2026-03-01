@@ -1,6 +1,6 @@
 services:
   saxsspot-nanosystem-service:
-    image: jordenndev/saxsspot
+    image: jordenndev/saxsspot-nanosystem-service
     build:
       context: ../SaxsSpot.NanoSystemService.Database
       dockerfile: Dockerfile
