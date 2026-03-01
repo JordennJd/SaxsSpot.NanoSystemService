@@ -11,6 +11,13 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddKafkaConsumer(this IServiceCollection services, IConfiguration configuration)
     {
+        var consumerEnabled = configuration.GetValue("kafka:consumerEnabled", true);
+        if (!consumerEnabled)
+        {
+            services.AddMassTransit(x => x.UsingInMemory((_, _) => { }));
+            return services;
+        }
+
         services.AddMassTransit(x =>
         {
             x.AddConsumer<RunGenerationConsumer>();
