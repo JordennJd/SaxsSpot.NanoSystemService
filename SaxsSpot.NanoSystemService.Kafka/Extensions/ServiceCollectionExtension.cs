@@ -27,6 +27,7 @@ public static class ServiceCollectionExtension
                 {
                     var brokers = configuration.GetSection("kafka:brokers").Get<string[]>() 
                         ?? new[] { "localhost:29092" };
+                    Console.WriteLine($"brokers: {brokers}");
                     var group = configuration["kafka:group"] ?? "run-generation-consumer-group";
                     var topic = configuration["kafka:topic"] ?? "run-generation-queue";
                     
