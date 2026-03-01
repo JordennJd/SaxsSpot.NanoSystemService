@@ -1,3 +1,4 @@
+using Confluent.Kafka;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,7 +45,7 @@ public static class ServiceCollectionExtension
                                 t.NumPartitions = 5;
                                 t.ReplicationFactor = 1;
                             });
-                            
+                            e.AutoOffsetReset = AutoOffsetReset.Earliest;
                             e.ConfigureConsumer<RunGenerationConsumer>(context, c =>
                             {
                                 c.ConcurrentMessageLimit = 1;
