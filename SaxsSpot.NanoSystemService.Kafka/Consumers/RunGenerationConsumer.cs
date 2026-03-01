@@ -1,5 +1,6 @@
 using MassTransit;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Contracts.Messages;
@@ -7,7 +8,10 @@ using SaxsSpot.NanoSystemService.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Kafka.Consumers;
 
-public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationConsumer> logger)
+public class RunGenerationConsumer(
+    IMediator mediator,
+    ILogger<RunGenerationConsumer> logger,
+    IHostApplicationLifetime hostLifetime)
     : IConsumer<RunGenerationRequest>
 {
     public async Task Consume(ConsumeContext<RunGenerationRequest> context)
@@ -39,8 +43,6 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
 
         try
         {
-            // Map DTO to CommonParticleGenerationParameters with default MinSize/MaxSize
-            // MinSize and MaxSize are required by base class but not used in generation
             var parameters = new CommonParticleGenerationParameters(
                 request.Parameters.Count,
                 request.Parameters.NumericalConcentration,
@@ -61,16 +63,17 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
                 request.NeedAnalysis ?? true,
                 request.NeedMetrics ?? false);
             
-            var result = await mediator.Send(command, context.CancellationToken);
+            // Link consume token with host shutdown so SIGTERM/docker stop cancels the generation immediately
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+                context.CancellationToken,
+                hostLifetime.ApplicationStopping);
+            var result = await mediator.Send(command, linkedCts.Token);
             
             if (result.IsSuccess)
             {
                 logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}, Partition={Partition}, Offset={Offset}. Offset will be committed automatically.", 
                     request.OperationId, request.SeriesId, partition, offset);
                 
-                // Method completes successfully - MassTransit will automatically commit the offset
-                // No exception thrown = offset committed = message marked as processed
-                // This prevents other instances from processing the same message
                 return;
             }
             else
@@ -78,7 +81,6 @@ public class RunGenerationConsumer(IMediator mediator, ILogger<RunGenerationCons
                 var errorMessage = string.Join(", ", result.Errors.Select(e => e.Message));
                 logger.LogError("RunGenerationRequest processing failed. OperationId: {OperationId}, Errors: {Errors}", 
                     request.OperationId, errorMessage);
-                // Throw exception to prevent offset commit, allowing message to be retried
                 throw new InvalidOperationException($"RunGenerationCommand failed: {errorMessage}");
             }
         }

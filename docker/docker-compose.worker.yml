@@ -1,0 +1,8 @@
+services:
+  saxsspot-nanosystem-service:
+    image: jordenndev/saxsspot-nanosystem-service
+    environment:
+      APP_ENV: Docker
+      ConnectionStrings__psql: Host=local.devspot.tech;Port=54321;Database=saxs;Username=postgres;Password=postgres;SearchPath=saxs
+      Grpc__ServerAddress: "http://local.devspot.tech:50051"
+      kafka__brokers__0: "local.devspot.tech:29092" 
