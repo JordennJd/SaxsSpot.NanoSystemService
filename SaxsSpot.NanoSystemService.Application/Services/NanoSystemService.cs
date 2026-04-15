@@ -39,6 +39,7 @@ public class NanoSystemService(
             KTo = generationParams.Max(x => x.K),
             ThetaFrom = generationParams.Min(x => x.Theta),
             ThetaTo = generationParams.Max(x => x.Theta),
+            CreatedAt = DateTime.UtcNow,
         };
         await seriesStorage.UpdateOrInsertAsync(series);
 
@@ -234,6 +235,7 @@ public class NanoSystemService(
                     KTo = options.K,
                     ThetaFrom = options.Theta,
                     ThetaTo = options.Theta,
+                    CreatedAt = DateTime.UtcNow,
                 };
                 await seriesStorage.UpdateOrInsertAsync(newSeries);
                 existingSeries = newSeries;

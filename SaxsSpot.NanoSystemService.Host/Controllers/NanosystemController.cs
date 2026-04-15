@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.CancelOperation;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.DeleteNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.DeleteSeries;
+using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.UpdateSeriesComment;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadNanosystem;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.Get;
@@ -158,6 +159,19 @@ public class NanosystemController(IMediator mediator) : Controller
         return Ok(result.ToResultDto());
     }
 
+    [HttpPatch("update-series-comment")]
+    public async Task<IActionResult> UpdateSeriesComment([FromBody] UpdateSeriesCommentRequest request)
+    {
+        var result = await mediator.Send(new UpdateSeriesCommentCommand(request.SeriesId, request.Comment));
+        if (result.IsFailed)
+        {
+            return BadRequest(result.ToResultDto());
+        }
+
+        return Ok(result.ToResultDto());
+    }
+
     public record DeleteNanosystemRequest(Guid NanosystemId, string Password);
     public record DeleteSeriesRequest(Guid SeriesId);
+    public record UpdateSeriesCommentRequest(Guid SeriesId, string? Comment);
 }

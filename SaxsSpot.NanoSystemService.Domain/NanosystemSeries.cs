@@ -61,4 +61,10 @@ public class NanosystemSeries
 
     [Column("theta_to")]
     public float ThetaTo { get; set; }
+
+    [Column("series_comment")]
+    public string? Comment { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
 }

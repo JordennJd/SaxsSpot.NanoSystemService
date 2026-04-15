@@ -39,4 +39,8 @@ public record NanosystemSeriesDto
     public float ThetaFrom { get; set; }
 
     public float ThetaTo { get; set; }
+
+    public string? Comment { get; set; }
+
+    public DateTime CreatedAt { get; set; }
 }
