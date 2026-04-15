@@ -26,6 +26,8 @@ public sealed class NanosystemSeriesGridifyMapper : GridifyMapper<NanosystemSeri
         AddMap("ThetaFrom", x => x.ThetaFrom);
         AddMap("ThetaTo", x => x.ThetaTo);
         AddMap("Comment", x => x.Comment);
+        AddMap("comment", x => x.Comment);
+        AddMap("series_comment", x => x.Comment);
         AddMap("CreatedAt", x => x.CreatedAt);
         AddMap("createdAt", x => x.CreatedAt);
         AddMap("created_at", x => x.CreatedAt);
