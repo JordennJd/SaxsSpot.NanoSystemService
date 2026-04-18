@@ -67,4 +67,10 @@ public class NanosystemSeries
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// True if generation used SAT-only intersection checks (no spatial tree / cheap filters).
+    /// </summary>
+    [Column("disable_intersection_optimizations")]
+    public bool DisableIntersectionOptimizations { get; set; }
 }

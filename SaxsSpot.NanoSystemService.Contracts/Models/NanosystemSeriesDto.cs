@@ -43,4 +43,6 @@ public record NanosystemSeriesDto
     public string? Comment { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public bool DisableIntersectionOptimizations { get; set; }
 }

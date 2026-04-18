@@ -27,7 +27,10 @@ public class NanoSystemService(
     public async Task RunSeriesGeneration(MassGenerateNanoSystemOptions options,
         CancellationToken cancellationToken = default, EventHandler<int>? progressHandler = null)
     {
-        var generationParams = options.Options;
+        var forceSatOnly = options.DisableIntersectionOptimizations == true;
+        var generationParams = options.Options
+            .Select(o => forceSatOnly ? o with { DisableIntersectionOptimizations = true } : o)
+            .ToList();
 
         var series = new NanosystemSeries
         {
@@ -40,6 +43,7 @@ public class NanoSystemService(
             ThetaFrom = generationParams.Min(x => x.Theta),
             ThetaTo = generationParams.Max(x => x.Theta),
             CreatedAt = DateTime.UtcNow,
+            DisableIntersectionOptimizations = forceSatOnly || generationParams.Any(x => x.DisableIntersectionOptimizations),
         };
         await seriesStorage.UpdateOrInsertAsync(series);
 

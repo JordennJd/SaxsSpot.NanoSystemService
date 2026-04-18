@@ -10,4 +10,5 @@ public record MassGenerateNanoSystemOptions<TParticle>(
 public record MassGenerateNanoSystemOptions(
     IList<CommonParticleGenerationParameters> Options,
     ParticleKind NanoSystemsKind,
-    IList<int>? PointCounts = null);
+    IList<int>? PointCounts = null,
+    bool? DisableIntersectionOptimizations = null);
