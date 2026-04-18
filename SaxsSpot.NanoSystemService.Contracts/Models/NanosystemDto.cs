@@ -40,4 +40,9 @@ public record NanosystemDto
     public DateTime GenerationEnd { get; set; }
     
     public DateTime InputDate { get; set; }
+
+    /// <summary>
+    /// True for parallelepiped systems generated without intersection placement shortcuts (SAT-only mode).
+    /// </summary>
+    public bool DisableIntersectionOptimizations { get; set; }
 }

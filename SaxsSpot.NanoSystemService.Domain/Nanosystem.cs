@@ -61,4 +61,10 @@ public class Nanosystem
     
     [Column("input_date")]
     public DateTime InputDate { get; set; }
+
+    /// <summary>
+    /// True when parallelepiped generation used SAT-only checks (intersection optimizations disabled).
+    /// </summary>
+    [Column("disable_intersection_optimizations")]
+    public bool DisableIntersectionOptimizations { get; set; }
 }

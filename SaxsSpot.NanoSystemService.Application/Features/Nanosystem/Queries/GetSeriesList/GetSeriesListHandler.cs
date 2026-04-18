@@ -11,6 +11,10 @@ public class GetSeriesListHandler(INanoSystemSeriesStorage storage, IMapper mapp
 {
     public async Task<Result<Paging<NanosystemSeriesDto>>> Handle(GetSeriesListQuery request, CancellationToken cancellationToken)
     {
-        return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemSeriesDto>>(await storage.Gridify(request.Query)));
+        var query = request.Query;
+        if (string.IsNullOrWhiteSpace(query.OrderBy))
+            query.OrderBy = "-CreatedAt";
+
+        return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemSeriesDto>>(await storage.Gridify(query)));
     }
 }

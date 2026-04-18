@@ -12,6 +12,10 @@ public class GetNanosystemListHandler(INanoSystemStorage storage, IMapper mapper
 {
     public async Task<Result<Paging<NanosystemDto>>> Handle(GetNanosystemListQuery request, CancellationToken cancellationToken)
     {
-        return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemDto>>(await storage.Gridify(request.Query)));
+        var query = request.Query;
+        if (string.IsNullOrWhiteSpace(query.OrderBy))
+            query.OrderBy = "-InputDate";
+
+        return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemDto>>(await storage.Gridify(query)));
     }
 }

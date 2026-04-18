@@ -1,3 +1,4 @@
+using Gridify;
 using Microsoft.Extensions.DependencyInjection;
 using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Storage.DbContexts;
@@ -9,6 +10,8 @@ public static class DependencyInjections
 {
     public static IServiceCollection AddNanoSystemServiceStorage(this IServiceCollection services)
     {
+        // Npgsql + timestamptz: filter parameters must be UTC, not Unspecified (Gridify default for parsed dates).
+        GridifyGlobalConfiguration.DefaultDateTimeKind = DateTimeKind.Utc;
 
         return services.AddDbContext<NanoSystemDbContext>()
                 .AddDbContext<NanoSystemSeriesDbContext>()

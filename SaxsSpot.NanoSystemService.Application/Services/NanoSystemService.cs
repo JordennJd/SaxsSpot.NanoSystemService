@@ -160,10 +160,14 @@ public class NanoSystemService(
             avgByFiveZone = distributeParticles.Sum(x => x.GetVolume())/(await generator.GetGenerationZone()).GetVolume();
         }
         
+        var disableIntersectionOptimizations =
+            options is ParallelepipedGenerationParameters pp && pp.DisableIntersectionOptimizations;
+
         var entity = new Nanosystem
         {
             Id = nanosystemId,
             ParticleKind = options.GetParticleKind(),
+            DisableIntersectionOptimizations = disableIntersectionOptimizations,
             ParticleCount = distributeParticles.Count,
             NumericalConcentration = avgByFiveZone,
             GlobalSize = generationZone.GlobalSize,
@@ -228,7 +232,6 @@ public class NanoSystemService(
             
             if (existingSeries == null)
             {
-                var satOnly = options is ParallelepipedGenerationParameters pp && pp.DisableIntersectionOptimizations;
                 // Create new series with initial parameters from current generation
                 var newSeries = new NanosystemSeries
                 {
@@ -241,7 +244,7 @@ public class NanoSystemService(
                     ThetaFrom = options.Theta,
                     ThetaTo = options.Theta,
                     CreatedAt = DateTime.UtcNow,
-                    DisableIntersectionOptimizations = satOnly,
+                    DisableIntersectionOptimizations = disableIntersectionOptimizations,
                 };
                 await seriesStorage.UpdateOrInsertAsync(newSeries);
                 existingSeries = newSeries;
