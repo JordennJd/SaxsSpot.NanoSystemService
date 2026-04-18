@@ -1,3 +1,4 @@
+using System.Reflection;
 using AutoMapper;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.AnalyzeModels;
@@ -228,6 +229,7 @@ public class NanoSystemService(
             
             if (existingSeries == null)
             {
+                var satOnly = TryGetDisableIntersectionOptimizations(options);
                 // Create new series with initial parameters from current generation
                 var newSeries = new NanosystemSeries
                 {
@@ -240,12 +242,16 @@ public class NanoSystemService(
                     ThetaFrom = options.Theta,
                     ThetaTo = options.Theta,
                     CreatedAt = DateTime.UtcNow,
+                    DisableIntersectionOptimizations = satOnly,
                 };
                 await seriesStorage.UpdateOrInsertAsync(newSeries);
                 existingSeries = newSeries;
             }
             
             var generatedSystems = (await storage.WhereAsync(x => x.SeriesId == seriesId)).ToList();
+            existingSeries.DisableIntersectionOptimizations =
+                existingSeries.DisableIntersectionOptimizations || TryGetDisableIntersectionOptimizations(options);
+
             if (generatedSystems.Any())
             {
                 existingSeries.MinParticleSizeFrom = generatedSystems.Min(x => x.MinParticleSize);
@@ -262,6 +268,26 @@ public class NanoSystemService(
                 existingSeries.NumericalConcentrationTo = generatedSystems.Max(x => x.NumericalConcentration);
                 await seriesStorage.UpdateOrInsertAsync(existingSeries);
             }
+            else if (TryGetDisableIntersectionOptimizations(options))
+            {
+                await seriesStorage.UpdateOrInsertAsync(existingSeries);
+            }
         }
+    }
+
+    /// <summary>
+    /// Reads SAT-only flag from generation parameters without requiring a newer Contracts package
+    /// (property exists on current ParallelepipedGenerationParameters record when present).
+    /// </summary>
+    private static bool TryGetDisableIntersectionOptimizations(ParticleGenerationParameters options)
+    {
+        if (options.GetParticleKind() != ParticleKind.Parallelepiped)
+            return false;
+
+        var prop = options.GetType().GetProperty(
+            "DisableIntersectionOptimizations",
+            BindingFlags.Public | BindingFlags.Instance);
+
+        return prop?.GetValue(options) is true;
     }
 }
