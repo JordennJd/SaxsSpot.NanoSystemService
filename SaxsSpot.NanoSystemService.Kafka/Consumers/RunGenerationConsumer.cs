@@ -52,7 +52,8 @@ public class RunGenerationConsumer(
                 request.Parameters.Theta,
                 request.Parameters.K,
                 request.Parameters.Excess,
-                request.Parameters.Epsilon);
+                request.Parameters.Epsilon,
+                request.Parameters.DisableIntersectionOptimizations);
             
             var command = new RunGenerationCommand(
                 parameters,

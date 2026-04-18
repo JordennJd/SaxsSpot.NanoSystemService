@@ -55,4 +55,7 @@ public record CommonParticleGenerationParametersDto
     
     [JsonPropertyName("pointCount")]
     public int? PointCount { get; init; }
+
+    [JsonPropertyName("disableIntersectionOptimizations")]
+    public bool DisableIntersectionOptimizations { get; init; }
 }

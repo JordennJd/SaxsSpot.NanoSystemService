@@ -50,4 +50,9 @@ public class GetNanosystemGenerationOptionsQuery : IRequest<Result<MassGenerateN
     public int? PointCountFrom { get; set; }
     
     public int? PointCountTo { get; set; }
+
+    /// <summary>
+    /// Parallelepiped only: use ternary tree for locality but SAT-only pairwise checks (no cheaper intersection shortcuts).
+    /// </summary>
+    public bool DisableIntersectionOptimizations { get; set; }
 }

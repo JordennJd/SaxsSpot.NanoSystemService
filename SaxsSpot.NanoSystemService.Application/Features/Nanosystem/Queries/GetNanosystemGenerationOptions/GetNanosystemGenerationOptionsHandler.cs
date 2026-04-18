@@ -64,12 +64,22 @@ public class GetNanosystemGenerationOptionsHandler : IRequestHandler<GetNanosyst
                 .Select(v => (int)v).ToList();
         }
 
+        var disableIntersectionOptimizations =
+            request.ParticleKind == ParticleKind.Parallelepiped && request.DisableIntersectionOptimizations;
+
         for (int i = 0; i < count; i++)
         {
-            parametersList.Add(new CommonParticleGenerationParameters( particleCounts[i],
-                (float?)numericalConcentrations[i], (float?)globalSizes[i],
-                (float)minSizes[i], (float)maxSizes[i], (float)thetas[i], (float)ks[i], (float)excesses[i], (float?)epsilons[i]));
-
+            parametersList.Add(new CommonParticleGenerationParameters(
+                particleCounts[i],
+                numericalConcentrations[i],
+                globalSizes[i],
+                (float)minSizes[i],
+                (float)maxSizes[i],
+                (float)thetas[i],
+                (float)ks[i],
+                excesses[i],
+                (float?)epsilons[i],
+                disableIntersectionOptimizations));
         }
 
         return Task.FromResult(FluentResults.Result.Ok(new MassGenerateNanoSystemOptions(parametersList, request.ParticleKind, pointCounts)));
