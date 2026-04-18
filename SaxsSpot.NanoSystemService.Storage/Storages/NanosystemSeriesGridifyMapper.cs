@@ -31,5 +31,7 @@ public sealed class NanosystemSeriesGridifyMapper : GridifyMapper<NanosystemSeri
         AddMap("CreatedAt", x => x.CreatedAt);
         AddMap("createdAt", x => x.CreatedAt);
         AddMap("created_at", x => x.CreatedAt);
+        AddMap("DisableIntersectionOptimizations", x => x.DisableIntersectionOptimizations);
+        AddMap("disableIntersectionOptimizations", x => x.DisableIntersectionOptimizations);
     }
 }
