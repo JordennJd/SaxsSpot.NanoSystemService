@@ -13,7 +13,7 @@ public class GetSeriesListHandler(INanoSystemSeriesStorage storage, IMapper mapp
     {
         var query = request.Query;
         if (string.IsNullOrWhiteSpace(query.OrderBy))
-            query.OrderBy = "-CreatedAt";
+            query.OrderBy = "CreatedAt desc";
 
         return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemSeriesDto>>(await storage.Gridify(query)));
     }

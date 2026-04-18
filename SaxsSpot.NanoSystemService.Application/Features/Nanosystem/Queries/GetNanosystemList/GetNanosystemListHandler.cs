@@ -14,7 +14,7 @@ public class GetNanosystemListHandler(INanoSystemStorage storage, IMapper mapper
     {
         var query = request.Query;
         if (string.IsNullOrWhiteSpace(query.OrderBy))
-            query.OrderBy = "-InputDate";
+            query.OrderBy = "InputDate desc";
 
         return FluentResults.Result.Ok(mapper.Map<Paging<NanosystemDto>>(await storage.Gridify(query)));
     }
