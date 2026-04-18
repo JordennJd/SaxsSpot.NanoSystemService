@@ -58,6 +58,6 @@ public class Program
 
         var cts = new CancellationTokenSource();
         
-        await mediator.Send(new RunGenerationCommand(result.Value.Options[0]), cts.Token);
+        await mediator.Send(new RunGenerationCommand(result.Value.Options[0], Guid.NewGuid()), cts.Token);
     }
 }   
