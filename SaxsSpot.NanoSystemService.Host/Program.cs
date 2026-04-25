@@ -1,5 +1,6 @@
 using SaxsSpot.NanoSystemService.Application.Extensions;
 using SaxsSpot.NanoSystemService.Host.Middlewares;
+using SaxsSpot.NanoSystemService.Host.Services;
 using SaxsSpot.NanoSystemService.Host.Settings;
 using SaxsSpot.NanoSystemService.Kafka.Extensions;
 using SaxsSpot.NanoSystemService.Storage.Extensions;
@@ -44,6 +45,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthenticator(builder.Configuration);
 builder.Services.AddJobServiceClient(builder.Configuration);
+builder.Services.AddHostedService<RunGenerationInboxProcessor>();
 
 var app = builder.Build();
 

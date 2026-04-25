@@ -2,6 +2,7 @@ using Confluent.Kafka;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 using SaxsSpot.NanoSystemService.Contracts.Messages;
 using SaxsSpot.NanoSystemService.Kafka.Consumers;
 
@@ -11,6 +12,8 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddKafkaConsumer(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton(new JsonSerializerOptions(JsonSerializerDefaults.Web));
+
         var consumerEnabled = configuration.GetValue("kafka:consumerEnabled", true);
         if (!consumerEnabled)
         {

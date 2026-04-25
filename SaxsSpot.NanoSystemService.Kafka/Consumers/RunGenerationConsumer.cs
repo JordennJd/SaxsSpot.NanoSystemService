@@ -1,17 +1,18 @@
+using System.Text.Json;
 using MassTransit;
-using MediatR;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunGeneration;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Contracts.Messages;
-using SaxsSpot.NanoSystemService.Contracts.Models;
+using SaxsSpot.Shared.ProgressTrackerClient.Contracts.Services;
+using JobModels = SaxsSpot.Shared.ProgressTrackerClient.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Kafka.Consumers;
 
 public class RunGenerationConsumer(
-    IMediator mediator,
+    IRunGenerationInboxStorage inboxStorage,
+    IJobServiceClient jobServiceClient,
     ILogger<RunGenerationConsumer> logger,
-    IHostApplicationLifetime hostLifetime)
+    JsonSerializerOptions jsonSerializerOptions)
     : IConsumer<RunGenerationRequest>
 {
     public async Task Consume(ConsumeContext<RunGenerationRequest> context)
@@ -43,60 +44,51 @@ public class RunGenerationConsumer(
 
         try
         {
-            var parameters = new CommonParticleGenerationParameters(
-                request.Parameters.Count,
-                request.Parameters.NumericalConcentration,
-                request.Parameters.GlobalSize,
-                MinSize: 1.0f, // Default value, not used
-                MaxSize: 3.0f, // Default value, not used
-                request.Parameters.Theta,
-                request.Parameters.K,
-                request.Parameters.Excess,
-                request.Parameters.Epsilon,
-                request.Parameters.DisableIntersectionOptimizations);
-            
-            var command = new RunGenerationCommand(
-                parameters,
+            var payload = JsonSerializer.Serialize(request, jsonSerializerOptions);
+            var enqueued = await inboxStorage.EnqueueAsync(
                 request.OperationId,
                 request.SeriesId,
-                request.ZoneCount ?? 20,
-                request.Parameters.PointCount ?? 0, // 0 means no analysis
-                request.NeedAnalysis ?? true,
-                request.NeedMetrics ?? false);
-            
-            // Link consume token with host shutdown so SIGTERM/docker stop cancels the generation immediately
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
-                context.CancellationToken,
-                hostLifetime.ApplicationStopping);
-            var result = await mediator.Send(command, linkedCts.Token);
-            
-            if (result.IsSuccess)
+                payload,
+                context.CancellationToken);
+
+            if (enqueued)
             {
-                logger.LogInformation("RunGenerationRequest processed successfully. OperationId: {OperationId}, SeriesId: {SeriesId}, Partition={Partition}, Offset={Offset}. Offset will be committed automatically.", 
+                await TryNotifyJobQueuedAsync(request.OperationId);
+                logger.LogInformation("RunGenerationRequest persisted to inbox. OperationId={OperationId}, SeriesId={SeriesId}, Partition={Partition}, Offset={Offset}. Offset will be committed now.",
                     request.OperationId, request.SeriesId, partition, offset);
-                
-                return;
             }
             else
             {
-                var errorMessage = string.Join(", ", result.Errors.Select(e => e.Message));
-                logger.LogError("RunGenerationRequest processing failed. OperationId: {OperationId}, Errors: {Errors}", 
-                    request.OperationId, errorMessage);
-                throw new InvalidOperationException($"RunGenerationCommand failed: {errorMessage}");
+                logger.LogInformation("RunGenerationRequest already exists in inbox (duplicate). OperationId={OperationId}, Partition={Partition}, Offset={Offset}. Offset will be committed now.",
+                    request.OperationId, partition, offset);
             }
-        }
-        catch (OperationCanceledException)
-        {
-            logger.LogWarning(
-                "RunGenerationRequest processing was canceled (application shutdown). OperationId: {OperationId}. The message will be redelivered and reprocessed when a consumer is available.",
-                request.OperationId);
-            throw;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error processing RunGenerationRequest. OperationId: {OperationId}", request.OperationId);
-            // Re-throw to prevent offset commit, allowing message to be retried
+            logger.LogError(ex, "Error saving RunGenerationRequest into inbox. OperationId: {OperationId}", request.OperationId);
             throw;
+        }
+    }
+
+    private async Task TryNotifyJobQueuedAsync(Guid operationId)
+    {
+        try
+        {
+            var startResult = await jobServiceClient.StartJobAsync(new JobModels.StartJobQuery(operationId.ToString()));
+            if (!startResult.IsSuccessful)
+            {
+                logger.LogWarning("Failed to start job for enqueued inbox message. OperationId={OperationId}, Error={Error}",
+                    operationId, startResult.ErrorMessage);
+                return;
+            }
+
+            await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
+                operationId.ToString(),
+                "Message saved to inbox queue and will be processed soon"));
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to notify job service about inbox enqueue. OperationId={OperationId}", operationId);
         }
     }
 }

@@ -18,6 +18,7 @@ public static class DependencyInjections
                 .AddDbContext<RadialAnalysisDbContext>()
                 .AddDbContext<RadialAnalysisLayerDbContext>()
                 .AddDbContext<GenerationMetricsDbContext>()
+                .AddDbContext<RunGenerationInboxDbContext>()
                 .AddDbContext<ParticleGenerationMetricsDbContext>()
                 .AddScoped<INanoSystemStorage, NanoSystemStorage>()
                 .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
@@ -25,6 +26,7 @@ public static class DependencyInjections
                 .AddScoped<IRadialAnalysisStorage, RadialAnalysisStorage>()
                 .AddScoped<IRadialAnalysisLayerStorage, RadialAnalysisLayerStorage>()
                 .AddScoped<IGenerationMetricsStorage, GenerationMetricsStorage>()
+                .AddScoped<IRunGenerationInboxStorage, RunGenerationInboxStorage>()
                 .AddScoped<IParticleGenerationMetricsStorage, ParticleGenerationMetricsStorage>()
             ;
     }
