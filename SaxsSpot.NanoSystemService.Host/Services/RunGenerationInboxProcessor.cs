@@ -54,7 +54,6 @@ public class RunGenerationInboxProcessor(
 
                 try
                 {
-                    await TryNotifyJobMessageAsync(jobServiceClient, claimed.OperationId, "Inbox message claimed, generation is starting");
                     var command = RunGenerationCommandFactory.Create(request);
                     var result = await mediator.Send(command, stoppingToken);
 
@@ -95,18 +94,6 @@ public class RunGenerationInboxProcessor(
                 logger.LogError(ex, "Unhandled error in RunGeneration inbox processor loop");
                 await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
             }
-        }
-    }
-
-    private async Task TryNotifyJobMessageAsync(IJobServiceClient jobServiceClient, Guid operationId, string message)
-    {
-        try
-        {
-            await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(operationId.ToString(), message));
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Failed to update job message. OperationId={OperationId}", operationId);
         }
     }
 

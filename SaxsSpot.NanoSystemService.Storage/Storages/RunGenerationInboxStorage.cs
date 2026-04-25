@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Inbox;
 using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Domain;
@@ -38,38 +39,59 @@ public class RunGenerationInboxStorage(RunGenerationInboxDbContext dbContext) : 
 
     public async Task<ClaimedRunGenerationInboxMessage?> ClaimNextPendingAsync(CancellationToken cancellationToken)
     {
-        var now = DateTime.UtcNow;
-        var claimed = await dbContext.Entities
-            .FromSqlInterpolated($@"
-                UPDATE run_generation_inbox
-                SET status = {(int)RunGenerationInboxMessageStatus.InProgress},
-                    attempts = attempts + 1,
-                    processing_started_at = {now},
-                    updated_at = {now},
-                    last_error = NULL
-                WHERE id = (
-                    SELECT id
-                    FROM run_generation_inbox
-                    WHERE status = {(int)RunGenerationInboxMessageStatus.Pending}
-                    ORDER BY created_at
-                    FOR UPDATE SKIP LOCKED
-                    LIMIT 1
-                )
-                RETURNING *")
-            .AsNoTracking()
-            .FirstOrDefaultAsync(cancellationToken);
+        var connection = dbContext.Database.GetDbConnection();
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync(cancellationToken);
+        }
 
-        if (claimed is null)
+        await using var command = connection.CreateCommand();
+        command.CommandText = @"
+            UPDATE run_generation_inbox
+            SET status = @in_progress_status,
+                attempts = attempts + 1,
+                processing_started_at = @now,
+                updated_at = @now,
+                last_error = NULL
+            WHERE id = (
+                SELECT id
+                FROM run_generation_inbox
+                WHERE status = @pending_status
+                ORDER BY created_at
+                FOR UPDATE SKIP LOCKED
+                LIMIT 1
+            )
+            RETURNING id, operation_id, series_id, payload, attempts;";
+
+        var now = DateTime.UtcNow;
+
+        var inProgressParam = command.CreateParameter();
+        inProgressParam.ParameterName = "in_progress_status";
+        inProgressParam.Value = (int)RunGenerationInboxMessageStatus.InProgress;
+        command.Parameters.Add(inProgressParam);
+
+        var pendingParam = command.CreateParameter();
+        pendingParam.ParameterName = "pending_status";
+        pendingParam.Value = (int)RunGenerationInboxMessageStatus.Pending;
+        command.Parameters.Add(pendingParam);
+
+        var nowParam = command.CreateParameter();
+        nowParam.ParameterName = "now";
+        nowParam.Value = now;
+        command.Parameters.Add(nowParam);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
         {
             return null;
         }
 
         return new ClaimedRunGenerationInboxMessage(
-            claimed.Id,
-            claimed.OperationId,
-            claimed.SeriesId,
-            claimed.Payload,
-            claimed.Attempts);
+            reader.GetGuid(0),
+            reader.GetGuid(1),
+            reader.GetGuid(2),
+            reader.GetString(3),
+            reader.GetInt32(4));
     }
 
     public async Task MarkProcessedAsync(Guid id, CancellationToken cancellationToken)

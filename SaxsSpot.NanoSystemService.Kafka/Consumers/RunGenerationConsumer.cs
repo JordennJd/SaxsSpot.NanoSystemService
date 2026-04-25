@@ -53,7 +53,7 @@ public class RunGenerationConsumer(
 
             if (enqueued)
             {
-                await TryNotifyJobQueuedAsync(request.OperationId);
+                await NotifyJobQueuedAsync(request.OperationId);
                 logger.LogInformation("RunGenerationRequest persisted to inbox. OperationId={OperationId}, SeriesId={SeriesId}, Partition={Partition}, Offset={Offset}. Offset will be committed now.",
                     request.OperationId, request.SeriesId, partition, offset);
             }
@@ -70,25 +70,19 @@ public class RunGenerationConsumer(
         }
     }
 
-    private async Task TryNotifyJobQueuedAsync(Guid operationId)
+    private async Task NotifyJobQueuedAsync(Guid operationId)
     {
+        logger.LogInformation("Operation {OperationId} is waiting in inbox queue", operationId);
+
         try
         {
-            var startResult = await jobServiceClient.StartJobAsync(new JobModels.StartJobQuery(operationId.ToString()));
-            if (!startResult.IsSuccessful)
-            {
-                logger.LogWarning("Failed to start job for enqueued inbox message. OperationId={OperationId}, Error={Error}",
-                    operationId, startResult.ErrorMessage);
-                return;
-            }
-
             await jobServiceClient.ChangeJobMessageAsync(new JobModels.ChangeJobMessageQuery(
                 operationId.ToString(),
-                "Message saved to inbox queue and will be processed soon"));
+                "Message received and saved to inbox queue. Status: waiting"));
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Failed to notify job service about inbox enqueue. OperationId={OperationId}", operationId);
+            logger.LogWarning(ex, "Failed to notify job service about waiting inbox message. OperationId={OperationId}", operationId);
         }
     }
 }
