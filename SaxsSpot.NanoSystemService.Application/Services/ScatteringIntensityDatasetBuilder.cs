@@ -10,13 +10,15 @@ public static class ScatteringIntensityDatasetBuilder
         IEnumerable<Guid> calculationIds,
         IScatteringCalculationStorage storage,
         IScatteringResultObjectStorage objectStorage,
+        string legendLabel,
         CancellationToken cancellationToken)
     {
         var datasets = new List<Dataset>();
-        var calculations = await storage.WhereAsync(x => calculationIds.Contains(x.Id));
+        var calculations = (await storage.WhereAsync(x => calculationIds.Contains(x.Id))).ToList();
 
-        foreach (var calculation in calculations)
+        for (var i = 0; i < calculations.Count; i++)
         {
+            var calculation = calculations[i];
             var points = new List<IntensityResult>();
             await foreach (var point in objectStorage.Load(calculation.ObjectId, cancellationToken))
             {
@@ -30,7 +32,7 @@ public static class ScatteringIntensityDatasetBuilder
 
             datasets.Add(new Dataset
             {
-                id = calculation.Id.ToString(),
+                id = calculations.Count == 1 ? legendLabel : $"{legendLabel} ({i + 1})",
                 x = points.Select(p => p.QVector).ToArray(),
                 y = points.Select(p => p.Intensity).ToArray()
             });

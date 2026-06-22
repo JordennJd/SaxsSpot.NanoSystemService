@@ -11,10 +11,9 @@ public static class SphereScatteringCalculator
         IEnumerable<Sphere> spheres,
         double globalSize,
         double numericalConcentration,
-        SpaceParametersDto qSpaceParameters,
-        double excess = 0)
+        SpaceParametersDto qSpaceParameters)
     {
-        var system = TrimSystem(spheres.ToList(), excess, globalSize);
+        var system = spheres.ToList();
         if (system.Count == 0)
         {
             throw new ArgumentException("System is empty or doesn't exist");
@@ -68,20 +67,6 @@ public static class SphereScatteringCalculator
         }
 
         return results;
-    }
-
-    private static List<Sphere> TrimSystem(List<Sphere> system, double excess, double globalSize)
-    {
-        if (excess <= 0 || system.Count == 0)
-        {
-            return system;
-        }
-
-        var trimSize = globalSize * (1 - excess);
-        var halfTrim = trimSize / 2;
-        return system
-            .Where(s => Abs(s.X) <= halfTrim && Abs(s.Y) <= halfTrim && Abs(s.Z) <= halfTrim)
-            .ToList();
     }
 
     private static float GetSpTmpConst(Particle particle)

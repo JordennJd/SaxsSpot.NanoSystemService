@@ -17,6 +17,7 @@ public class PlotScatteringChartHandler(
             request.ScatteringCalculationIds,
             storage,
             objectStorage,
+            "Theory",
             cancellationToken);
 
         if (datasets.Count == 0)

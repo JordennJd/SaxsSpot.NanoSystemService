@@ -26,9 +26,10 @@ public class PlotScatteringChartAveragePngHandler(
             request.ScatteringCalculationIds,
             storage,
             objectStorage,
+            "Theory",
             cancellationToken);
 
-        var average = ScatteringIntensityDatasetBuilder.BuildAverageDataset(datasets, "SAXS (new)");
+        var average = ScatteringIntensityDatasetBuilder.BuildAverageDataset(datasets, "Theory");
         if (average is null)
         {
             return FluentResults.Result.Fail<string>("No scattering data found or datasets have different point counts.");

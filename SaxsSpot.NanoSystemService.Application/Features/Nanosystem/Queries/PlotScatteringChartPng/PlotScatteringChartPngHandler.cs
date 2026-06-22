@@ -26,6 +26,7 @@ public class PlotScatteringChartPngHandler(
             request.ScatteringCalculationIds,
             storage,
             objectStorage,
+            "Theory",
             cancellationToken);
 
         if (datasets.Count == 0)

@@ -41,12 +41,6 @@ public class RunScatteringCalculationHandler(
                 throw new ArgumentException($"Unsupported particle kind: {nanosystem.ParticleKind}");
             }
 
-            var excess = request.Excess ?? 0;
-            if (nanosystem.ParticleKind == ParticleKind.Sphere && request.Excess is null)
-            {
-                excess = 0;
-            }
-
             var inputDate = DateTime.UtcNow;
             var calculationKind = nanosystem.ParticleKind == ParticleKind.Sphere
                 ? ScatteringCalculationKind.Sphere
@@ -106,8 +100,7 @@ public class RunScatteringCalculationHandler(
                             spheres,
                             nanosystem.GlobalSize,
                             nanosystem.NumericalConcentration,
-                            request.QSpaceParameters,
-                            excess);
+                            request.QSpaceParameters);
                     }
 
                     var objectId = Guid.NewGuid();
@@ -124,7 +117,7 @@ public class RunScatteringCalculationHandler(
                         QSpaceMethod = (int)request.QSpaceParameters.SpaceMethod,
                         QScaleMethod = (int)request.QSpaceParameters.ScaleMethod,
                         QSpaceParameter = request.QSpaceParameters.SpaceParameter,
-                        Excess = nanosystem.ParticleKind == ParticleKind.Sphere ? excess : request.Excess,
+                        Excess = null,
                         InputDate = inputDate,
                         StartDate = startDate,
                         EndDate = DateTime.UtcNow,
