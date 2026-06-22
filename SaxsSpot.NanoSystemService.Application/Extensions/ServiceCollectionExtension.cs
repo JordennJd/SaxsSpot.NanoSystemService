@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SaxsSpot.NanoSystemService.Application.Behaviors;
+using SaxsSpot.NanoSystemService.Application.Interfaces;
 using SaxsSpot.NanoSystemService.Application.Services;
 using SaxsSpot.NanoSystemService.Contracts.Services;
 
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtension
         return services
             .AddSingleton<IOperationCancellationService, OperationCancellationService>()
             .AddScoped<INanoSystemService, Services.NanoSystemService>()
+            .AddScoped<IChartService, ChartService>()
             .AddLogging(cfg => cfg.AddConsole())
             .AddMediatR(cfg =>
                 {
