@@ -5,7 +5,9 @@ public static class OperationType
     private static readonly HashSet<string> SupportedTypes =
     [
         "RunRadialAnalysis",
-        "RunGeneration"
+        "RunGeneration",
+        "RunStrictScatteringCalculation",
+        "RunSphereScatteringCalculation"
     ];
 
     public static bool IsSupported(string? operationType) =>

@@ -20,6 +20,7 @@ public static class DependencyInjections
                 .AddDbContext<GenerationMetricsDbContext>()
                 .AddDbContext<RunGenerationInboxDbContext>()
                 .AddDbContext<ParticleGenerationMetricsDbContext>()
+                .AddDbContext<ScatteringCalculationDbContext>()
                 .AddScoped<INanoSystemStorage, NanoSystemStorage>()
                 .AddScoped<INanoSystemSeriesStorage, NanoSystemSeriesStorage>()
                 .AddScoped<INanoSystemObjectStorage, NanoSystemObjectStorage>()
@@ -28,6 +29,8 @@ public static class DependencyInjections
                 .AddScoped<IGenerationMetricsStorage, GenerationMetricsStorage>()
                 .AddScoped<IRunGenerationInboxStorage, RunGenerationInboxStorage>()
                 .AddScoped<IParticleGenerationMetricsStorage, ParticleGenerationMetricsStorage>()
+                .AddScoped<IScatteringCalculationStorage, ScatteringCalculationStorage>()
+                .AddScoped<IScatteringResultObjectStorage, ScatteringResultObjectStorage>()
             ;
     }
 }

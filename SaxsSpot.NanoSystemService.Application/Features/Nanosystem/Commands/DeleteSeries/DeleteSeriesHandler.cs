@@ -11,6 +11,8 @@ public class DeleteSeriesHandler(
     INanoSystemObjectStorage nanosystemObjectStorage,
     IRadialAnalysisStorage radialAnalysisStorage,
     IRadialAnalysisLayerStorage radialAnalysisLayerStorage,
+    IScatteringCalculationStorage scatteringCalculationStorage,
+    IScatteringResultObjectStorage scatteringResultObjectStorage,
     IGenerationMetricsStorage generationMetricsStorage,
     IParticleGenerationMetricsStorage particleGenerationMetricsStorage,
     ILogger<DeleteSeriesHandler> logger) : IRequestHandler<DeleteSeriesCommand, FluentResults.Result<Unit>>
@@ -48,6 +50,24 @@ public class DeleteSeriesHandler(
 
                 // Delete radial analyses
                 await radialAnalysisStorage.DeleteRangeAsync(radialAnalyses);
+
+                var scatteringCalculations = await scatteringCalculationStorage.WhereAsync(x => x.NanosystemId == nanosystem.Id);
+                foreach (var calculation in scatteringCalculations)
+                {
+                    if (calculation.ObjectId != Guid.Empty)
+                    {
+                        try
+                        {
+                            await scatteringResultObjectStorage.Delete(calculation.ObjectId);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogWarning(ex, "Failed to delete scattering result object {ObjectId}, continuing", calculation.ObjectId);
+                        }
+                    }
+                }
+
+                await scatteringCalculationStorage.DeleteRangeAsync(scatteringCalculations);
 
                 // Delete generation metrics
                 var generationMetrics = await generationMetricsStorage.WhereAsync(x => x.NanosystemId == nanosystem.Id);

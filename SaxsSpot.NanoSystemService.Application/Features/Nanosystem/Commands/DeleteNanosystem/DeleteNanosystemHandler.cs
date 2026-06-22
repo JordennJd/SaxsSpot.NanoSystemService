@@ -10,6 +10,8 @@ public class DeleteNanosystemHandler(
     INanoSystemObjectStorage nanosystemObjectStorage,
     IRadialAnalysisStorage radialAnalysisStorage,
     IRadialAnalysisLayerStorage radialAnalysisLayerStorage,
+    IScatteringCalculationStorage scatteringCalculationStorage,
+    IScatteringResultObjectStorage scatteringResultObjectStorage,
     IGenerationMetricsStorage generationMetricsStorage,
     IParticleGenerationMetricsStorage particleGenerationMetricsStorage,
     ILogger<DeleteNanosystemHandler> logger) : IRequestHandler<DeleteNanosystemCommand, FluentResults.Result<Unit>>
@@ -47,6 +49,25 @@ public class DeleteNanosystemHandler(
             // Delete radial analyses
             await radialAnalysisStorage.DeleteRangeAsync(radialAnalyses);
             logger.LogDebug("Deleted {Count} radial analyses for nanosystem {NanosystemId}", radialAnalyses.Count(), request.NanosystemId);
+
+            var scatteringCalculations = await scatteringCalculationStorage.WhereAsync(x => x.NanosystemId == request.NanosystemId);
+            foreach (var calculation in scatteringCalculations)
+            {
+                if (calculation.ObjectId != Guid.Empty)
+                {
+                    try
+                    {
+                        await scatteringResultObjectStorage.Delete(calculation.ObjectId);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogWarning(ex, "Failed to delete scattering result object {ObjectId}, continuing", calculation.ObjectId);
+                    }
+                }
+            }
+
+            await scatteringCalculationStorage.DeleteRangeAsync(scatteringCalculations);
+            logger.LogDebug("Deleted {Count} scattering calculations for nanosystem {NanosystemId}", scatteringCalculations.Count(), request.NanosystemId);
 
             // Delete generation metrics
             var generationMetrics = await generationMetricsStorage.WhereAsync(x => x.NanosystemId == request.NanosystemId);

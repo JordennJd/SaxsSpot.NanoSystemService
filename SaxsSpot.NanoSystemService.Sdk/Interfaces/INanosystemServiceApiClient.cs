@@ -40,4 +40,13 @@ public interface INanosystemServiceApiClient
     /// <param name="cancellationToken"></param>
     /// <returns>File stream</returns>
     Task<Stream> DownloadRadialAnalysis(Guid id, CancellationToken cancellationToken = default);
+
+    Task<ResultDto<Paging<ScatteringCalculationDto>>> GetScatteringCalculationList(
+        int? page = null,
+        int? pageSize = null,
+        string? sortBy = null,
+        string? filter = null,
+        CancellationToken cancellationToken = default);
+
+    Task<Stream> DownloadScatteringCalculation(Guid id, CancellationToken cancellationToken = default);
 }

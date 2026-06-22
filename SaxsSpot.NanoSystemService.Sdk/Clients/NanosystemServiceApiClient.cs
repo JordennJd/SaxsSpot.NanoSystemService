@@ -64,4 +64,42 @@ public class NanosystemServiceApiClient(string baseUrl, IAuthenticator authentic
 
         return result;
     }
+
+    public async Task<ResultDto<Paging<ScatteringCalculationDto>>> GetScatteringCalculationList(
+        int? page = null,
+        int? pageSize = null,
+        string? sortBy = null,
+        string? filter = null,
+        CancellationToken cancellationToken = default)
+    {
+        var request = baseUrl
+            .AppendPathSegments("api", "scattering-calculation", "get-scattering-calculation-list");
+
+        if (page.HasValue)
+            request = request.SetQueryParam("page", page.Value);
+
+        if (pageSize.HasValue)
+            request = request.SetQueryParam("pageSize", pageSize.Value);
+
+        if (!string.IsNullOrEmpty(sortBy))
+            request = request.SetQueryParam("sortBy", sortBy);
+
+        if (!string.IsNullOrEmpty(filter))
+            request = request.SetQueryParam("filter", filter);
+
+        return await request
+            .WithOAuthBearerToken(await authenticator.GetAccessTokenAsync(cancellationToken))
+            .GetJsonAsync<ResultDto<Paging<ScatteringCalculationDto>>>(cancellationToken: cancellationToken);
+    }
+
+    public async Task<Stream> DownloadScatteringCalculation(Guid id, CancellationToken cancellationToken = default)
+    {
+        var request = baseUrl
+            .AppendPathSegments("api", "scattering-calculation", "download-scattering-calculation")
+            .SetQueryParam("id", id);
+
+        return await request
+            .WithOAuthBearerToken(await authenticator.GetAccessTokenAsync(cancellationToken))
+            .GetStreamAsync(cancellationToken: cancellationToken);
+    }
 }
