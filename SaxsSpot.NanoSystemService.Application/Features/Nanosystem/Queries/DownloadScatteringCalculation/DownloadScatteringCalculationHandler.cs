@@ -24,18 +24,26 @@ public class DownloadScatteringCalculationHandler(
             return FluentResults.Result.Fail<Stream>($"No result data found for scattering calculation {request.Id}");
         }
 
-        var results = new List<IntensityResult>();
-        await foreach (var point in objectStorage.Load(calculation.ObjectId, cancellationToken))
+        var memoryStream = new MemoryStream();
+        await using (var writer = new StreamWriter(memoryStream, leaveOpen: true))
         {
-            results.Add(point);
+            var hasData = false;
+            await foreach (var point in objectStorage.Load(calculation.ObjectId, cancellationToken))
+            {
+                hasData = true;
+                await writer.WriteLineAsync(point.ToString());
+            }
+
+            if (!hasData)
+            {
+                await memoryStream.DisposeAsync();
+                return FluentResults.Result.Fail<Stream>($"No intensity data found for scattering calculation {request.Id}");
+            }
+
+            await writer.FlushAsync();
         }
 
-        if (results.Count == 0)
-        {
-            return FluentResults.Result.Fail<Stream>($"No intensity data found for scattering calculation {request.Id}");
-        }
-
-        var stream = await ScatteringCalculationWriter.Write(results);
-        return FluentResults.Result.Ok<Stream>(stream);
+        memoryStream.Position = 0;
+        return FluentResults.Result.Ok<Stream>(memoryStream);
     }
 }

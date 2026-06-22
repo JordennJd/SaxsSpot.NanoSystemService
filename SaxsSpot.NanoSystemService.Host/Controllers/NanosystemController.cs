@@ -15,6 +15,7 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNano
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetNanosystems;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetParticles;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSeriesList;
+using SaxsSpot.NanoSystemService.Host.Extensions;
 using SaxsSpot.NanoSystemGeneration.Contracts.Models.Enums;
 using SaxsSpot.NanoSystemService.Contracts.Models;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetSphereScatteringCalculationParameters;
@@ -79,7 +80,7 @@ public class NanosystemController(IMediator mediator) : Controller
     public async Task<IActionResult> DownloadNanosystem([FromQuery] DownloadNanosystemQuery query)
     {
         var result = await mediator.Send(query);
-        return File(result.ValueOrDefault, "application/octet-stream", $"{query.Id}");
+        return result.ToDownloadFileResult($"{query.Id}.txt");
     }
 
     /// <summary>

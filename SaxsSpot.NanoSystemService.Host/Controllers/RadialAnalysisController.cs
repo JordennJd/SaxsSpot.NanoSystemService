@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Commands.RunRadialAnalysis;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.DownloadRadialAnalysis;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.GetRadialAnalysisList;
+using SaxsSpot.NanoSystemService.Host.Extensions;
 using SaxsSpot.Shared.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Host.Controllers;
@@ -29,6 +30,6 @@ public class RadialAnalysisController(IMediator mediator) : Controller
     public async Task<IActionResult> DownloadRadialAnalysis([FromQuery] DownloadRadialAnalysisQuery query)
     {
         var result = await mediator.Send(query);
-        return File(result.ValueOrDefault, "application/octet-stream", $"{query.Id}");
+        return result.ToDownloadFileResult($"radial-analysis-{query.Id}.txt");
     }
 }

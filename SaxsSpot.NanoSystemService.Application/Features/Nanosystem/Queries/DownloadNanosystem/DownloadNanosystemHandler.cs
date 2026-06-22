@@ -10,9 +10,12 @@ public class DownloadNanosystemHandler(INanoSystemObjectStorage storage, INanoSy
     public async Task<IResult<Stream>> Handle(DownloadNanosystemQuery request, CancellationToken cancellationToken)
     {
         var system = await systemStorage.FirstOrDefaultAsync(x => x.Id == request.Id);
-        var data = storage.Load(system.ObjectId, cancellationToken);
-        await using var sw = new StreamWriter(new MemoryStream());
+        if (system == null)
+        {
+            return FluentResults.Result.Fail<Stream>($"Nanosystem with ID {request.Id} not found");
+        }
 
+        var data = storage.Load(system.ObjectId, cancellationToken);
         var stream = await NanosystemWriter.Write(data, system);
 
         return FluentResults.Result.Ok(stream);

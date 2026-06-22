@@ -8,6 +8,7 @@ using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.PlotSca
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.PlotScatteringChartAverage;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.PlotScatteringChartAveragePng;
 using SaxsSpot.NanoSystemService.Application.Features.Nanosystem.Queries.PlotScatteringChartPng;
+using SaxsSpot.NanoSystemService.Host.Extensions;
 using SaxsSpot.Shared.Contracts.Models;
 
 namespace SaxsSpot.NanoSystemService.Host.Controllers;
@@ -33,7 +34,7 @@ public class ScatteringCalculationController(IMediator mediator) : Controller
     public async Task<IActionResult> DownloadScatteringCalculation([FromQuery] DownloadScatteringCalculationQuery query)
     {
         var result = await mediator.Send(query);
-        return File(result.ValueOrDefault, "application/octet-stream", $"{query.Id}");
+        return result.ToDownloadFileResult($"scattering-calculation-{query.Id}.txt");
     }
 
     [HttpGet("plot")]
